@@ -1,8 +1,21 @@
 import { NextResponse } from "next/server";
 
-export async function middleware(req) {
+export function middleware(req) {
+  const { pathname } = req.nextUrl;
+
+  // ✅ 1. Explicitly allow public routes
+  if (
+    pathname.startsWith("/card/") ||      // public card pages
+    pathname.startsWith("/api/cards/public") ||
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/signup") ||
+    pathname.startsWith("/") && pathname === "/"
+  ) {
+    return NextResponse.next();
+  }
+
+  // ✅ 2. Only then check auth
   const token = req.cookies.get("token")?.value;
-//   const { pathname } = req.nextUrl;
 
   if (!token) {
     return NextResponse.redirect(new URL("/login", req.url));
@@ -14,7 +27,7 @@ export async function middleware(req) {
 export const config = {
   matcher: [
     "/dashboard/:path*",
-    "/create-card",
-    "/edit-card",
+    "/create-card/:path*",
+    "/edit-card/:path*",
   ],
 };
