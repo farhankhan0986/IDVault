@@ -12,5 +12,9 @@ export async function middleware(req) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/create-card/:path*"],
+  matcher: [
+    "/dashboard/:path*",
+    "/create-card",
+    "/edit-card",
+  ],
 };
