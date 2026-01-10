@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import CardUI from "@/app/components/CardUI";
+import CardUI from "../../components/CardUI";
 
 export default function PublicCardClient({ id }) {
   const [card, setCard] = useState(null);
