@@ -1,26 +1,96 @@
 @import "tailwindcss";
 
+/* ===== Design Tokens ===== */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Core */
+  --background: #0b0f14;
+  --surface: #111827;
+  --border: #1f2937;
+
+  /* Text */
+  --foreground: #e5e7eb;
+  --muted: #9ca3af;
+
+  /* Accent */
+  --accent: #7c7cff; /* violet */
+  --accent-soft: rgba(124, 124, 255, 0.15);
+
+  /* Radius */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
 }
 
-@media (prefers-color-scheme: dark) {
+/* Optional light mode support */
+@media (prefers-color-scheme: light) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ffffff;
+    --surface: #f9fafb;
+    --border: #e5e7eb;
+    --foreground: #111827;
+    --muted: #6b7280;
+    --accent: #6366f1;
+    --accent-soft: rgba(99, 102, 241, 0.12);
   }
+}
+
+/* ===== Base ===== */
+html,
+body {
+  height: 100%;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, -apple-system, Segoe UI,
+    Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* ===== Utilities ===== */
+.card {
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border-radius: var(--radius-md);
+  transition: transform 0.15s ease, box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px var(--accent-soft);
+}
+
+.input {
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent-soft);
+  border-color: var(--accent);
 }
