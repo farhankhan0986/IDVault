@@ -1,20 +1,20 @@
 import { NextResponse } from "next/server";
 
-export function middleware(req) {
+export function proxy(req) {
   const { pathname } = req.nextUrl;
 
-  // ✅ 1. Explicitly allow public routes
+  // ✅ Public routes (no auth required)
   if (
-    pathname.startsWith("/card/") ||      // public card pages
+    pathname === "/" ||
+    pathname.startsWith("/card/") ||
     pathname.startsWith("/api/cards/public") ||
     pathname.startsWith("/login") ||
-    pathname.startsWith("/signup") ||
-    pathname.startsWith("/") && pathname === "/"
+    pathname.startsWith("/signup")
   ) {
     return NextResponse.next();
   }
 
-  // ✅ 2. Only then check auth
+  // ✅ Protected routes
   const token = req.cookies.get("token")?.value;
 
   if (!token) {
