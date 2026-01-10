@@ -40,7 +40,7 @@ export default function MyCardPage() {
   }, [router]);
 
   /* Loading */
-  if (loading && card) {
+  if (loading ) {
     return (
       <div className="min-h-screen bg-background px-6 py-8">
         <div className="max-w-5xl mx-auto">
