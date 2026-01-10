@@ -96,7 +96,7 @@ export default function LoginPage() {
           <div className="flex items-center gap-2 text-xs text-muted">
             <input
               type="checkbox"
-              className="accent-[var(--accent)] cursor-pointer"
+              className="accent-accent cursor-pointer"
             />
             <span>Remember me</span>
           </div>

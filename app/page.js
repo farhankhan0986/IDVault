@@ -21,7 +21,7 @@ export default function HomePage() {
       <section className="relative min-h-screen flex items-center justify-center text-center px-6">
         {/* Glow */}
         <div className="absolute inset-0">
-          <div className="absolute top-[-200px] left-1/2 -translate-x-1/2 h-[400px] w-[400px] bg-[var(--accent)] opacity-20 blur-[120px]" />
+          <div className="absolute -top-50 left-1/2 -translate-x-1/2 h-[400px] w-[400px] bg-[var(--accent)] opacity-20 blur-[120px]" />
         </div>
 
         <motion.div
@@ -141,14 +141,14 @@ export default function HomePage() {
                     </div>
                     <div className="flex-1 space-y-1">
                       <p>John Doe</p>
-                      <p className="text-sm text-gray-700">
+                      <p className="text-sm text-white">
                         Software Developer
                       </p>
                     </div>
                   </div>
 
                   <div className=" mt-2">
-                    <p className="text-sm text-gray-700">
+                    <p className="text-sm text-white">
                       Passionate developer building clean, secure, and scalable
                       digital experiences.
                     </p>

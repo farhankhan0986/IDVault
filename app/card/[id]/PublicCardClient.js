@@ -42,7 +42,7 @@ export default function PublicCardClient({ id }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gray-00 flex items-center justify-center p-6">
       <CardUI card={card} showActions={false} />
     </div>
   );
