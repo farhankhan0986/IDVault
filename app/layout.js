@@ -3,7 +3,7 @@ import Navbar from "./components/Navbar";
 import { Toaster } from "sonner";
 
 export const metadata = {
-  title: "IDVault",
+  title: "IDVault- Digital ID Card Manager",
   description: "Securely store and manage your digital IDs with IDVault.",
 };
 
