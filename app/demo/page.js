@@ -18,11 +18,19 @@ export default function DemoCardUI() {
           className="relative w-24 h-24 mt-3 rounded-full object-cover border border-border mb-4"
         />
 
-        <h2 className="text-xl font-semibold tracking-tight">
+        <h2 className="text-xl font-semibold tracking-tight flex items-center gap-2">
+          <span className="relative flex items-center justify-center">
+            <span className="absolute inset-0 rounded-full bg-accent/30 blur-[6px]" />
+            <img
+              src="/check.png"
+              alt="Verified"
+              className="relative w-4 h-4 rounded-full bg-background ring-1 ring-accent/40 p-[2px]"
+            />
+          </span>
           John Doe
         </h2>
 
-        <p className="text-sm text-accent mt-1 flex items-center gap-1">
+        <p className="text-sm text-accent mt-1 flex  items-center gap-1">
           <svg
             className="w-4 h-4"
             fill="none"
@@ -140,9 +148,7 @@ export default function DemoCardUI() {
 
       {/* Footer */}
       <div className="border-t border-border bg-surface py-3 text-center">
-        <p className="text-xs text-muted">
-          IDVault · Secure Digital Identity
-        </p>
+        <p className="text-xs text-muted">IDVault · Secure Digital Identity</p>
       </div>
     </div>
   );

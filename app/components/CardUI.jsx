@@ -64,7 +64,16 @@ export default function CardUI({ card, showActions = false }) {
           className="relative w-24 h-24 mt-3 rounded-full object-cover border border-border mb-4"
         />
 
-        <h2 className="text-xl font-semibold tracking-tight">
+       <h2 className="text-xl font-semibold tracking-tight flex items-center gap-2">
+          <span className="relative flex items-center justify-center">
+            <span className="absolute inset-0 rounded-full bg-accent/30 blur-[6px]" />
+            <img
+              src="/check.png"
+              alt="Verified"
+              title="Verified Digital ID"
+              className="relative w-4 h-4 rounded-full text-accent bg-background ring-1 ring-accent/40 p-[2px]"
+            />
+          </span>
           {card.fullName}
         </h2>
 
