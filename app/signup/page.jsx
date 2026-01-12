@@ -138,7 +138,7 @@ export default function SignupPage() {
             />
             <span>
               I agree to the{" "}
-              <a href="#" className="text-accent hover:underline">
+              <a href="/terms" className="text-accent hover:underline">
                 Terms & Conditions
               </a>
             </span>
