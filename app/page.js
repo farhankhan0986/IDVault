@@ -292,7 +292,7 @@ export default function HomePage() {
             <div className="absolute -inset-6 bg-accent/20 blur-3xl rounded-3xl opacity-30" />
 
             {/* Main Card */}
-            <div className="relative card p-10 md:p-20 overflow-hidden gap-2 flex flex-col items-center text-center">
+            <div className="relative card p-10 md:p-5 overflow-hidden gap-2 flex flex-col items-center text-center" style={{"position": "relative","top": "-66px"}}>
               {/* Header Badge */}
               <div className="flex flex-col items-center mt-6 gap-4 mb-10">
                 <span className="inline-flex items-center gap-2 px-4 py-4 rounded-full bg-accent/10 border border-accent/20 text-accent text-xs font-medium uppercase tracking-wider">
@@ -305,12 +305,12 @@ export default function HomePage() {
               </div>
 
               {/* Content Area */}
-              <div className="max-w-2xl flex flex-col items-center gap-8">
+              <div className="max-w-2xl flex flex-col items-center gap-4">
                 <div className="space-y-4">
                   <h3 className="text-3xl md:text-5xl font-bold tracking-tight text-white">
                     Built with care, not investors
                   </h3>
-                  <p className="text-white/60 leading-relaxed text-lg md:text-xl px-4">
+                  <p className="text-white/60 leading-relaxed text-sm md:text-lg px-4">
                     IDVault is an independent project designed, built, and
                     maintained by a single developer. No ads, no tracking, and
                     no hidden paywalls.
