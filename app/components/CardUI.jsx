@@ -14,9 +14,30 @@ export default function CardUI({ card, showActions = false }) {
       : "";
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(shareUrl);
+  if (typeof window === "undefined") return;
+
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(shareUrl);
+    } else {
+      // Fallback for older browsers / http
+      const textArea = document.createElement("textarea");
+      textArea.value = shareUrl;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-9999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+    }
+
     toast.success("Public link copied!");
-  };
+  } catch (err) {
+    toast.error("Failed to copy link");
+  }
+};
+
 
   const handleDelete = () => {
     toast("Delete this card?", {
