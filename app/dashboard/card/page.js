@@ -15,6 +15,7 @@ export default function MyCardPage() {
       try {
         const res = await fetch("/api/cards/my", {
           credentials: "include",
+          // cache: "no-store",
         });
 
         if (!res.ok) {
@@ -29,6 +30,7 @@ export default function MyCardPage() {
         }
 
         setCard(data.card);
+        console.log(data.card)
       } catch {
         router.push("/dashboard");
       } finally {

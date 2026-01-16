@@ -36,6 +36,7 @@ export async function PUT(req) {
     const linkedin = formData.get("linkedin");
     const github = formData.get("github");
     const imageFile = formData.get("profileImage");
+    const resumeLink = formData.get("resumeLink");
 
     if (fullName !== null) card.fullName = fullName;
     if (title !== null) card.title = title;
@@ -45,6 +46,7 @@ export async function PUT(req) {
     if (location !== null) card.location = location;
     if (linkedin !== null) card.linkedin = linkedin;
     if (github !== null) card.github = github;
+    if (resumeLink !== null) card.resumeLink = resumeLink;
 
     // Update image only if a new one is sent
     if (imageFile && imageFile.size > 0) {

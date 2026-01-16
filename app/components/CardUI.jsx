@@ -14,30 +14,29 @@ export default function CardUI({ card, showActions = false }) {
       : "";
 
   const handleCopy = async () => {
-  if (typeof window === "undefined") return;
+    if (typeof window === "undefined") return;
 
-  try {
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(shareUrl);
-    } else {
-      // Fallback for older browsers / http
-      const textArea = document.createElement("textarea");
-      textArea.value = shareUrl;
-      textArea.style.position = "fixed";
-      textArea.style.left = "-9999px";
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textArea);
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(shareUrl);
+      } else {
+        // Fallback for older browsers / http
+        const textArea = document.createElement("textarea");
+        textArea.value = shareUrl;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-9999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+      }
+
+      toast.success("Public link copied!");
+    } catch (err) {
+      toast.error("Failed to copy link");
     }
-
-    toast.success("Public link copied!");
-  } catch (err) {
-    toast.error("Failed to copy link");
-  }
-};
-
+  };
 
   const handleDelete = () => {
     toast("Delete this card?", {
@@ -85,7 +84,7 @@ export default function CardUI({ card, showActions = false }) {
           className="relative w-24 h-24 mt-3 rounded-full object-cover border border-border mb-4"
         />
 
-       <h2 className="text-xl font-semibold tracking-tight flex items-center gap-2">
+        <h2 className="text-xl font-semibold tracking-tight flex items-center gap-2">
           <span className="relative flex items-center justify-center">
             <span className="absolute inset-0 rounded-full bg-accent/30 blur-[6px]" />
             <img
@@ -199,13 +198,31 @@ export default function CardUI({ card, showActions = false }) {
       </div>
 
       {/* Social Links */}
-      {(card.linkedin || card.github) && (
+      {(card.linkedin || card.github || card.resumeLink) && (
         <div className="px-6 pb-6">
           <h3 className="text-xs font-medium text-muted mb-3 text-center">
             CONNECT
           </h3>
 
           <div className="flex justify-center gap-3">
+            {card.resumeLink && (
+              <a
+                href={card.resumeLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 rounded-full border border-border text-sm hover:bg-border transition"
+              >
+                {/* Resume */}
+                <svg
+                  className="w-4 h-4"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                </svg>
+                Resume
+              </a>
+            )}
             {card.linkedin && (
               <a
                 href={card.linkedin}

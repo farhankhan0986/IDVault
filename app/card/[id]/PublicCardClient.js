@@ -27,10 +27,22 @@ export default function PublicCardClient({ id }) {
     fetchCard();
   }, [id]);
 
-  if (loading) {
+  if (loading ) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        Loading card...
+      <div className="min-h-screen bg-background px-6 py-8">
+        <div className="max-w-5xl mx-auto">
+          <div className="max-w-md mx-auto animate-pulse rounded-2xl border border-border bg-surface p-6">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 bg-border rounded-full" />
+              <div className="flex-1 space-y-2">
+                <div className="h-4 bg-border rounded w-2/3" />
+                <div className="h-3 bg-border rounded w-1/2" />
+              </div>
+            </div>
+
+            <div className="mt-4 h-3 bg-border rounded w-1/3" />
+          </div>
+        </div>
       </div>
     );
   }

@@ -36,6 +36,7 @@ export async function POST(req) {
     const linkedin = formData.get("linkedin");
     const github = formData.get("github");
     const imageFile = formData.get("profileImage");
+    const resumeLink = formData.get("resumeLink");
 
     if (!fullName) {
       return NextResponse.json(
@@ -76,6 +77,7 @@ export async function POST(req) {
       location,
       linkedin,
       github,
+      resumeLink,
       profileImage: imageUrl,
     });
 

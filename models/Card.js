@@ -42,8 +42,15 @@ const DigitalCardSchema = new mongoose.Schema(
     github: {
       type: String,
     },
+    resumeLink: {
+      type: String,
+    },
     profileImage: {
       type: String,
+    },
+    isPublic: {
+      type: Boolean,
+      default: false,
     },
     isActive: {
       type: Boolean,

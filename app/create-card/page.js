@@ -28,6 +28,7 @@ export default function CreateCardPage() {
     fd.append("location", form.location || "");
     fd.append("linkedin", form.linkedin || "");
     fd.append("github", form.github || "");
+    fd.append("resumeLink", form.resumeLink || "");
 
     if (e.target.profileImage.files[0]) {
       fd.append("profileImage", e.target.profileImage.files[0]);
@@ -163,6 +164,16 @@ export default function CreateCardPage() {
                 onChange={handleChange}
                 className="input w-full mt-1 px-3 py-2"
               />
+            </div>
+            <div>
+            <label className="text-xs text-muted">Resume Link</label>
+            <input
+              name="resumeLink"
+              type="url"
+              onChange={handleChange}
+              placeholder="https://drive.google.com/file/d/..."
+              className="input w-full mt-1 px-3 py-2"
+            />
             </div>
           </div>
 

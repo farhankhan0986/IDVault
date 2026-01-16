@@ -30,6 +30,7 @@ export default function DashboardPage() {
         // Fetch card
         const cardRes = await fetch("/api/cards/my", {
           credentials: "include",
+          // cache: "no-store",
         });
 
         if (cardRes.ok) {
