@@ -42,25 +42,69 @@ export default function MyCardPage() {
   }, [router]);
 
   /* Loading */
-  if (loading ) {
-    return (
-      <div className="min-h-screen bg-background px-6 py-8">
-        <div className="max-w-5xl mx-auto">
-          <div className="max-w-md mx-auto animate-pulse rounded-2xl border border-border bg-surface p-6">
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-border rounded-full" />
-              <div className="flex-1 space-y-2">
-                <div className="h-4 bg-border rounded w-2/3" />
-                <div className="h-3 bg-border rounded w-1/2" />
-              </div>
-            </div>
+  if (loading) {
+  return (
+    <div className="min-h-screen bg-background px-6 py-8">
+      <div className="max-w-md mx-auto card overflow-hidden animate-pulse">
+        {/* Header */}
+        <div className="relative flex flex-col items-center text-center p-6">
+          <div className="absolute -top-20 -right-20 h-40 w-40 bg-border opacity-20 blur-3xl" />
 
-            <div className="mt-4 h-3 bg-border rounded w-1/3" />
+          {/* Action button placeholder */}
+          <div className="w-full h-9 rounded-lg bg-border mb-4" />
+
+          {/* Avatar */}
+          <div className="w-24 h-24 rounded-full bg-border mb-4" />
+
+          {/* Name */}
+          <div className="h-5 w-2/3 bg-border rounded mb-2" />
+
+          {/* Title */}
+          <div className="h-4 w-1/2 bg-border rounded" />
+        </div>
+
+        {/* Bio */}
+        <div className="px-6 pb-4 space-y-2">
+          <div className="h-3 w-full bg-border rounded" />
+          <div className="h-3 w-5/6 bg-border rounded" />
+          <div className="h-3 w-2/3 bg-border rounded mx-auto" />
+        </div>
+
+        {/* Contact */}
+        <div className="mx-6 my-4 rounded-xl border border-border bg-surface p-4 space-y-3">
+          <div className="h-3 w-1/3 bg-border rounded mb-2" />
+          <div className="h-4 w-full bg-border rounded" />
+          <div className="h-4 w-5/6 bg-border rounded" />
+          <div className="h-4 w-2/3 bg-border rounded" />
+        </div>
+
+        {/* Social */}
+        <div className="px-6 pb-6">
+          <div className="h-3 w-1/3 bg-border rounded mx-auto mb-3" />
+          <div className="flex justify-center gap-3">
+            <div className="h-9 w-24 bg-border rounded-full" />
+            <div className="h-9 w-24 bg-border rounded-full" />
+            <div className="h-9 w-24 bg-border rounded-full" />
           </div>
         </div>
+
+        {/* Actions */}
+        <div className="px-6 pb-6">
+          <div className="flex gap-3">
+            <div className="flex-1 h-9 bg-border rounded-lg" />
+            <div className="flex-1 h-9 bg-border rounded-lg" />
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="border-t border-border bg-surface py-3">
+          <div className="h-3 w-1/2 bg-border rounded mx-auto" />
+        </div>
       </div>
-    );
-  }
+    </div>
+  );
+}
+
 
   return (
     <div className="min-h-screen bg-background px-6 py-10">
