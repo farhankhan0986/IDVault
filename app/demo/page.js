@@ -24,7 +24,7 @@ export default function DemoCardUI() {
             <img
               src="/check.png"
               alt="Verified"
-              className="relative w-4 h-4 rounded-full bg-background ring-1 ring-accent/40 p-[2px]"
+              className="relative w-4 h-4 rounded-full bg-background ring-1 ring-accent/40 p-0.5"
             />
           </span>
           John Doe

@@ -38,6 +38,13 @@ export async function POST(req) {
     const imageFile = formData.get("profileImage");
     const resumeLink = formData.get("resumeLink");
 
+    if(phone && !/^\+?[1-9]\d{1,14}$/.test(phone)) {
+      return NextResponse.json(
+        { message: "Invalid phone number format" },
+        { status: 400 }
+      );
+    }
+
     if (!fullName) {
       return NextResponse.json(
         { message: "Full name is required" },

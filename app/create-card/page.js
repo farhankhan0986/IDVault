@@ -128,6 +128,7 @@ export default function CreateCardPage() {
               <label className="text-xs text-muted">Phone</label>
               <input
                 name="phone"
+                type="tel"
                 onChange={handleChange}
                 className="input w-full mt-1 px-3 py-2"
               />
