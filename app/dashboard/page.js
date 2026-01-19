@@ -1,11 +1,33 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import CardPreview from "../components/CardPreview";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function DashboardPage() {
   const router = useRouter();
+
+  const handleDeleteAccount = () => {
+    toast("Delete Account clicked", {
+      description: "This will trigger account deletion flow.",
+      action: {
+        label: "Delete",
+        onClick: async () => {
+          const res = await fetch("/api/auth/delete", {
+            method: "DELETE",
+            credentials: "include",
+          });
+          if (!res.ok) {
+            toast.error("Failed to delete account");
+            return;
+          }
+          toast.success("Account deleted successfully");
+          router.push("/");
+        },
+      },
+    });
+  };
 
   const [user, setUser] = useState(null);
   const [card, setCard] = useState(null);
@@ -84,14 +106,12 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          {!card && (
-            <button
-              onClick={() => router.push("/create-card")}
-              className="btn-primary px-5 py-2"
-            >
-              Create Digital Card
-            </button>
-          )}
+          <button
+            onClick={handleDeleteAccount}
+            className="rounded-xl cursor-pointer border border-red-400 px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 transition"
+          >
+            Delete Account
+          </button>
         </div>
 
         {/* Content */}

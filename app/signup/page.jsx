@@ -109,6 +109,7 @@ export default function SignupPage() {
             <input
               type="password"
               name="floating_password"
+              minLength={8}
               value={form.floating_password}
               onChange={handleChange}
               className="input w-full mt-1 px-3 py-2"
@@ -122,6 +123,7 @@ export default function SignupPage() {
             <input
               type="password"
               name="repeat_password"
+              minLength={8}
               value={form.repeat_password}
               onChange={handleChange}
               className="input w-full mt-1 px-3 py-2"
