@@ -42,21 +42,21 @@ Each user can create **one personal digital card**, edit or delete it, and share
 
 ## 🛠 Tech Stack
 
-**Frontend**
+### Frontend
 - Next.js 16 (App Router + Turbopack)
 - React
 - Tailwind CSS
 
-**Backend**
+### Backend
 - Next.js API Routes
 - JWT Authentication
 - Middleware-based route protection
 
-**Database**
+### Database
 - MongoDB
 - Mongoose
 
-**Deployment**
+### Deployment
 - Vercel
 
 ---
@@ -115,13 +115,13 @@ npm start
 
 ## 🧪 API Endpoints
 
-**Auth**
+### Auth
 - POST `/api/auth/signup`
 - POST `/api/auth/login`
 - POST `/api/auth/logout`
 - GET `/api/auth/me`
 
-**Cards**
+### Cards
 - POST `/api/cards/create`
 - PUT `/api/cards/update`
 - DELETE `/api/cards/delete`
@@ -134,7 +134,3 @@ npm start
 
 **Farhan Khan**  
 GitHub: https://github.com/farhankhan0986
-
----
-
-
