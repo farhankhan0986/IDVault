@@ -15,6 +15,7 @@ export default function SignupPage() {
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -104,31 +105,49 @@ export default function SignupPage() {
           </div>
 
           {/* Password */}
-          <div>
+          <div className=" flex flex-col gap-1">
             <label className="text-xs text-muted">Password</label>
-            <input
-              type="password"
-              name="floating_password"
-              minLength={8}
-              value={form.floating_password}
-              onChange={handleChange}
-              className="input w-full mt-1 px-3 py-2"
-              required
-            />
+            <div className="flex items-center transition ">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="floating_password"
+                value={form.floating_password}
+                onChange={handleChange}
+                className="input w-full mt-1 px-3 py-2"
+                required
+              />
+              <button
+                className="text-gray-500 hover:text-gray-700 cursor-pointer"
+                style={{ marginLeft: -30 }}
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                👁
+              </button>
+            </div>
           </div>
 
           {/* Confirm Password */}
-          <div>
-            <label className="text-xs text-muted">Confirm password</label>
-            <input
-              type="password"
-              name="repeat_password"
-              minLength={8}
-              value={form.repeat_password}
-              onChange={handleChange}
-              className="input w-full mt-1 px-3 py-2"
-              required
-            />
+          <div className=" flex flex-col gap-1">
+            <label className="text-xs text-muted">Confirm Password</label>
+            <div className="flex items-center transition ">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="repeat_password"
+                value={form.repeat_password}
+                onChange={handleChange}
+                className="input w-full mt-1 px-3 py-2"
+                required
+              />
+              <button
+                className="text-gray-500 hover:text-gray-700 cursor-pointer"
+                style={{ marginLeft: -30 }}
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                👁
+              </button>
+            </div>
           </div>
 
           {/* Terms */}
