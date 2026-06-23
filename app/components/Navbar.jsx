@@ -1,15 +1,29 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import {
+  LayoutDashboard,
+  Lock,
+  CreditCard,
+  LogOut,
+  Menu,
+  X,
+  ChevronDown,
+  User,
+} from "lucide-react";
 
 export default function Navbar() {
-  const [user, setUser] = useState(null);
+  const [user, setUser]         = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
-  const pathname = usePathname();
-  const router = useRouter();
+  const [userOpen, setUserOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const pathname  = usePathname();
+  const router    = useRouter();
+  const dropRef   = useRef(null);
 
+  // ── Fetch user ──────────────────────────────────────────────────────────
   useEffect(() => {
     const fetchMe = async () => {
       try {
@@ -22,9 +36,29 @@ export default function Navbar() {
       }
     };
     fetchMe();
+    setMenuOpen(false);
+    setUserOpen(false);
   }, [pathname]);
 
-  // Hide navbar on auth pages
+  // ── Scroll shadow ────────────────────────────────────────────────────────
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // ── Close user dropdown on outside click ────────────────────────────────
+  useEffect(() => {
+    const handler = (e) => {
+      if (dropRef.current && !dropRef.current.contains(e.target)) {
+        setUserOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  // Hide on auth pages
   if (pathname === "/login" || pathname === "/signup") return null;
 
   const handleLogout = async () => {
@@ -33,130 +67,239 @@ export default function Navbar() {
     router.push("/login");
   };
 
-  const isActive = (href) => pathname === href || pathname.startsWith(href + "/");
+  const isActive = (href) =>
+    pathname === href || pathname.startsWith(href + "/");
 
-  const navLinks = user
+  const initials = user?.name
+    ? user.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase()
+    : "U";
+
+  const NAV_LINKS = user
     ? [
-        { href: "/dashboard", label: "Dashboard" },
-        { href: "/vault", label: "Vault" },
-        { href: "/dashboard/card", label: "My Card" },
+        { href: "/dashboard",      label: "Dashboard", icon: LayoutDashboard },
+        { href: "/vault",          label: "Vault",     icon: Lock },
+        { href: "/dashboard/card", label: "My Card",   icon: CreditCard },
       ]
     : [];
 
   return (
-    <nav className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-border-subtle">
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-5 h-14">
-        {/* Logo */}
-        <Link
-          href="/"
-          className="text-base font-semibold tracking-tight text-foreground"
-        >
-          ID<span className="text-muted">Vault</span>
-        </Link>
+    <>
+      <nav
+        className={`sticky top-0 z-50 transition-all duration-200 ${
+          scrolled
+            ? "border-b border-border-subtle"
+            : "border-b border-transparent"
+        }`}
+        style={{
+          backgroundColor: scrolled
+            ? "rgba(9,9,11,0.92)"
+            : "rgba(9,9,11,0.75)",
+          backdropFilter: "blur(14px)",
+          WebkitBackdropFilter: "blur(14px)",
+        }}
+      >
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-5 h-14">
 
-        {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-1">
-          {navLinks.map(({ href, label }) => (
-            <Link
-              key={href}
-              href={href}
-              className={`px-3 py-1.5 rounded-md text-sm transition-colors duration-150 ${
-                isActive(href)
-                  ? "bg-surface-2 text-foreground font-medium"
-                  : "text-muted hover:text-foreground hover:bg-surface"
-              }`}
-            >
-              {label}
-            </Link>
-          ))}
-        </div>
-
-        {/* Desktop right actions hidden on mobile */}
-        <div className="hidden md:flex items-center gap-2">
-          {user ? (
-            <>
-              {/* User initial avatar */}
-              <div className="w-7 h-7 rounded-full bg-surface-2 border border-border-subtle flex items-center justify-center text-xs font-medium text-muted select-none">
-                {user.name?.[0]?.toUpperCase() || "U"}
-              </div>
-
-              <button
-                onClick={handleLogout}
-                className="btn-ghost px-3 py-1.5 text-sm"
-              >
-                Logout
-              </button>
-            </>
-          ) : (
-            <Link href="/login" className="btn-primary px-4 py-1.5 text-sm">
-              Sign in
-            </Link>
-          )}
-        </div>
-
-        {/* Mobile: show Sign in or hamburger only */}
-        <div className="flex md:hidden items-center gap-2">
-          {!user && (
-            <Link href="/login" className="btn-primary px-4 py-1.5 text-sm">
-              Sign in
-            </Link>
-          )}
-          {user && (
-            <button
-              className="btn-icon w-8 h-8"
-              onClick={() => setMenuOpen((v) => !v)}
-              aria-label="Menu"
-            >
-              <svg
-                viewBox="0 0 24 24"
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                {menuOpen ? (
-                  <>
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                  </>
-                ) : (
-                  <>
-                    <line x1="3" y1="12" x2="21" y2="12" />
-                    <line x1="3" y1="6" x2="21" y2="6" />
-                    <line x1="3" y1="18" x2="21" y2="18" />
-                  </>
-                )}
-              </svg>
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Mobile menu */}
-      {menuOpen && user && (
-        <div className="md:hidden border-t border-border-subtle bg-background px-5 pb-4 pt-2 flex flex-col gap-1">
-          {navLinks.map(({ href, label }) => (
-            <Link
-              key={href}
-              href={href}
-              onClick={() => setMenuOpen(false)}
-              className={`px-3 py-2 rounded-md text-sm transition-colors ${
-                isActive(href)
-                  ? "bg-surface-2 text-foreground font-medium"
-                  : "text-muted hover:text-foreground"
-              }`}
-            >
-              {label}
-            </Link>
-          ))}
-          <button
-            onClick={handleLogout}
-            className="mt-2 text-left px-3 py-2 text-sm text-danger hover:bg-danger/5 rounded-md transition"
+          {/* ── Logo ── */}
+          <Link
+            href="/"
+            className="flex items-center gap-2 group flex-shrink-0"
           >
-            Logout
-          </button>
+            {/* Wordmark icon */}
+            <div
+              className="w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-bold border border-border-subtle group-hover:border-border transition-colors"
+              style={{ backgroundColor: "var(--surface-2)" }}
+            >
+              ID
+            </div>
+            <span className="text-sm font-semibold tracking-tight">
+              ID<span className="text-muted">Vault</span>
+            </span>
+          </Link>
+
+          {/* ── Desktop nav links (center) ── */}
+          <div className="hidden md:flex items-center gap-0.5">
+            {NAV_LINKS.map(({ href, label, icon: Icon }) => (
+              <Link
+                key={href}
+                href={href}
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-sm transition-all duration-150 ${
+                  isActive(href)
+                    ? "text-foreground font-medium"
+                    : "text-muted hover:text-foreground hover:bg-surface"
+                }`}
+                style={isActive(href) ? { backgroundColor: "var(--surface-2)" } : {}}
+              >
+                <Icon size={13} />
+                {label}
+              </Link>
+            ))}
+          </div>
+
+          {/* ── Desktop right side ── */}
+          <div className="hidden md:flex items-center gap-2">
+            {user ? (
+              /* User dropdown */
+              <div className="relative" ref={dropRef}>
+                <button
+                  onClick={() => setUserOpen((v) => !v)}
+                  className="flex items-center gap-2 rounded-lg border border-border-subtle px-2.5 py-1.5 hover:border-border hover:bg-surface transition-all duration-150"
+                  style={{ backgroundColor: "var(--surface)" }}
+                >
+                  {/* Avatar */}
+                  <div
+                    className="w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-semibold flex-shrink-0"
+                    style={{ backgroundColor: "var(--surface-2)" }}
+                  >
+                    {initials}
+                  </div>
+                  <span className="text-sm text-muted max-w-[100px] truncate">
+                    {user.name?.split(" ")[0]}
+                  </span>
+                  <ChevronDown
+                    size={12}
+                    className={`text-muted-2 transition-transform duration-150 ${userOpen ? "rotate-180" : ""}`}
+                  />
+                </button>
+
+                {/* Dropdown */}
+                {userOpen && (
+                  <div
+                    className="absolute right-0 top-[calc(100%+6px)] w-52 rounded-xl border border-border-subtle shadow-xl overflow-hidden"
+                    style={{ backgroundColor: "var(--surface)" }}
+                  >
+                    {/* User info header */}
+                    <div
+                      className="px-4 py-3 border-b border-border-subtle"
+                      style={{ backgroundColor: "var(--surface-2)" }}
+                    >
+                      <p className="text-xs font-medium truncate">{user.name}</p>
+                      <p className="text-[11px] text-muted-2 truncate mt-0.5">{user.email}</p>
+                    </div>
+
+                    {/* Nav items */}
+                    <div className="p-1">
+                      {NAV_LINKS.map(({ href, label, icon: Icon }) => (
+                        <Link
+                          key={href}
+                          href={href}
+                          onClick={() => setUserOpen(false)}
+                          className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${
+                            isActive(href)
+                              ? "bg-surface-2 text-foreground font-medium"
+                              : "text-muted hover:text-foreground hover:bg-surface-2"
+                          }`}
+                        >
+                          <Icon size={13} />
+                          {label}
+                        </Link>
+                      ))}
+                    </div>
+
+                    {/* Logout */}
+                    <div className="p-1 border-t border-border-subtle">
+                      <button
+                        onClick={handleLogout}
+                        className="flex items-center gap-2.5 w-full px-3 py-2 rounded-lg text-sm text-danger hover:bg-surface-2 transition-colors"
+                      >
+                        <LogOut size={13} />
+                        Sign out
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/login"
+                  className="px-4 py-1.5 rounded-lg text-sm text-muted hover:text-foreground hover:bg-surface border border-transparent hover:border-border-subtle transition-all duration-150"
+                >
+                  Sign in
+                </Link>
+                <Link href="/signup" className="btn-primary px-4 py-1.5 text-sm">
+                  Get started
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* ── Mobile right side ── */}
+          <div className="flex md:hidden items-center gap-2">
+            {!user ? (
+              <Link href="/login" className="btn-primary px-4 py-1.5 text-sm">
+                Sign in
+              </Link>
+            ) : (
+              <>
+                {/* Mobile avatar pill */}
+                <div
+                  className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-semibold border border-border-subtle"
+                  style={{ backgroundColor: "var(--surface-2)" }}
+                >
+                  {initials}
+                </div>
+                {/* Hamburger */}
+                <button
+                  className="w-8 h-8 flex items-center justify-center rounded-lg border border-border-subtle hover:border-border hover:bg-surface transition-colors"
+                  style={{ backgroundColor: "var(--surface)" }}
+                  onClick={() => setMenuOpen((v) => !v)}
+                  aria-label="Toggle menu"
+                >
+                  {menuOpen ? <X size={15} /> : <Menu size={15} />}
+                </button>
+              </>
+            )}
+          </div>
         </div>
-      )}
-    </nav>
+
+        {/* ── Mobile menu ── */}
+        {menuOpen && user && (
+          <div
+            className="md:hidden border-t border-border-subtle px-4 pb-4 pt-3"
+            style={{ backgroundColor: "rgba(9,9,11,0.97)" }}
+          >
+            {/* User info */}
+            <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-border-subtle mb-3" style={{ backgroundColor: "var(--surface-2)" }}>
+              <div className="w-8 h-8 rounded-lg border border-border-subtle flex items-center justify-center text-xs font-semibold flex-shrink-0" style={{ backgroundColor: "var(--surface)" }}>
+                {initials}
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-medium truncate">{user.name}</p>
+                <p className="text-[11px] text-muted-2 truncate">{user.email}</p>
+              </div>
+            </div>
+
+            {/* Nav links */}
+            <div className="space-y-0.5 mb-3">
+              {NAV_LINKS.map(({ href, label, icon: Icon }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={() => setMenuOpen(false)}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors ${
+                    isActive(href)
+                      ? "bg-surface-2 text-foreground font-medium"
+                      : "text-muted hover:text-foreground hover:bg-surface"
+                  }`}
+                >
+                  <Icon size={14} />
+                  {label}
+                </Link>
+              ))}
+            </div>
+
+            {/* Logout */}
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm text-danger hover:bg-surface transition-colors border border-transparent hover:border-border-subtle"
+            >
+              <LogOut size={14} />
+              Sign out
+            </button>
+          </div>
+        )}
+      </nav>
+    </>
   );
 }

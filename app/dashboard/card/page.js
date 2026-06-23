@@ -93,12 +93,12 @@ export default function MyCardPage() {
 
         {/* Back link */}
         <button
-          onClick={() => router.push("/dashboard")}
-          className="flex items-center gap-1.5 text-xs text-muted hover:text-foreground transition"
-        >
-          <ArrowLeft size={12} />
-          Back to Dashboard
-        </button>
+  onClick={() => router.push("/dashboard")}
+  className="inline-flex items-center gap-2 rounded-lg border border-border-subtle bg-surface px-3 py-2 text-sm font-medium text-muted transition-all duration-200 hover:bg-surface-2 hover:text-foreground hover:shadow-sm"
+>
+  <ArrowLeft size={16} />
+  <span>Back to Dashboard</span>
+</button>
       </div>
     </div>
   );

@@ -85,7 +85,7 @@ export default function HomePage() {
     <main className="bg-background text-foreground overflow-hidden">
 
       {/* ─── HERO ─── */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bottom-20 px-5 pt-24 pb-20">
+      <section className="relative min-h-screen flex flex-col items-center justify-center bottom-12 overflow-hidden px-5 pt-24 pb-20">
 
         {/* ── BG dot grid ── */}
         <div
@@ -488,6 +488,168 @@ export default function HomePage() {
                 </div>
               </motion.div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── DIGITAL CARD SHOWCASE ─── */}
+      <section className="py-24 px-5">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
+            className="text-center mb-14"
+          >
+            <p className="text-xs font-medium text-muted-2 uppercase tracking-wider mb-3">Your Digital Card</p>
+            <h2 className="text-3xl font-semibold tracking-tight">One link for everything about you</h2>
+            <p className="text-sm text-muted mt-2 max-w-sm mx-auto">Share your identity, contacts, and links - no app install needed.</p>
+          </motion.div>
+
+          {/* ── 4-card masonry-style grid ── */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+
+            {/* Card A - Live preview (wide) */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }} viewport={{ once: true }}
+              className="md:col-span-7 rounded-2xl border border-border-subtle bg-surface overflow-hidden"
+            >
+              <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)", backgroundSize: "18px 18px" }} />
+              {/* Cover band */}
+              <div className="h-20 bg-surface-2 border-b border-border-subtle relative">
+                <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)", backgroundSize: "14px 14px" }} />
+                <div className="absolute top-3 right-3 flex items-center gap-1.5 border border-border-subtle rounded-lg px-2.5 py-1.5 text-xs text-muted-2" style={{ backgroundColor: 'var(--surface)' }}>
+                  <svg viewBox="0 0 24 24" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                  Share
+                </div>
+              </div>
+              <div className="px-6 pb-6">
+                <div className="flex items-start justify-between mb-4 -mt-10 relative z-20">
+                  <div className="w-14 h-14 rounded-2xl bg-surface-2 border-2 border-surface flex items-center justify-center text-base font-bold">FK</div>
+                  <div className="mt-8 flex items-center gap-1.5 rounded-full border border-border-subtle px-2.5 py-1" style={{ backgroundColor: 'var(--background)' }}>
+                    <svg viewBox="0 0 24 24" className="w-3 h-3 text-foreground" fill="currentColor"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span className="text-[10px] font-medium">Verified</span>
+                  </div>
+                </div>
+                <h3 className="text-base font-semibold">Farhan Khan</h3>
+                <p className="text-xs text-muted mt-0.5 mb-4">Software Developer</p>
+                <p className="text-xs text-muted leading-relaxed border-t border-border-subtle pt-4 mb-4">
+                  Building clean, secure digital products. Open to new opportunities.
+                </p>
+                <div className="space-y-2">
+                  {[
+                    { icon: <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 8l9 6 9-6M4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z"/></svg>, label: 'Email', val: 'farhan@gmail.com' },
+                    { icon: <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 21s6-5.33 6-10a6 6 0 10-12 0c0 4.67 6 10 6 10z"/><circle cx="12" cy="11" r="2.5"/></svg>, label: 'Location', val: 'Hyderabad, India' },
+                  ].map(({ icon, label, val }) => (
+                    <div key={label} className="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-border-subtle" style={{ backgroundColor: 'var(--surface-2)' }}>
+                      <div className="w-7 h-7 rounded-lg border border-border-subtle flex items-center justify-center text-muted flex-shrink-0" style={{ backgroundColor: 'var(--surface)' }}>{icon}</div>
+                      <div className="min-w-0">
+                        <p className="text-[10px] text-muted-2">{label}</p>
+                        <p className="text-xs font-medium">{val}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="grid grid-cols-3 gap-2 mt-3">
+                  {['Resume','GitHub','LinkedIn'].map(l => (
+                    <div key={l} className="flex flex-col items-center gap-1.5 rounded-xl border border-border-subtle py-3" style={{ backgroundColor: 'var(--surface-2)' }}>
+                      <div className="w-3.5 h-3.5 rounded bg-border" />
+                      <span className="text-[10px] text-muted-2">{l}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Right column - stacked cards */}
+            <div className="md:col-span-5 flex flex-col gap-4">
+
+              {/* Card B - Shareable link card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.08 }} viewport={{ once: true }}
+                className="rounded-2xl border border-border-subtle p-5 flex flex-col gap-4"
+                style={{ backgroundColor: 'var(--surface)' }}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl border border-border-subtle flex items-center justify-center" style={{ backgroundColor: 'var(--surface-2)' }}>
+                    <svg viewBox="0 0 24 24" className="w-4 h-4 text-muted" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-semibold">Shareable link</h3>
+                    <p className="text-xs text-muted-2">One URL, always up to date</p>
+                  </div>
+                </div>
+                <div className="rounded-xl border border-border-subtle px-3 py-2.5 flex items-center gap-2" style={{ backgroundColor: 'var(--background)' }}>
+                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-muted-2 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+                  <span className="text-xs font-mono text-muted truncate">idvault.app/card/farhankhan</span>
+                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-muted-2 ml-auto flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                </div>
+                <p className="text-xs text-muted leading-relaxed">
+                  Share with recruiters, colleagues, or clients. No app install required - just a link.
+                </p>
+              </motion.div>
+
+              {/* Card C - What's on your card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.16 }} viewport={{ once: true }}
+                className="rounded-2xl border border-border-subtle p-5 flex-1"
+                style={{ backgroundColor: 'var(--surface)' }}
+              >
+                <p className="text-xs font-medium text-muted-2 uppercase tracking-wider mb-4">What's on your card</p>
+                <div className="space-y-2.5">
+                  {[
+                    { label: 'Name & role',       done: true  },
+                    { label: 'Bio',               done: true  },
+                    { label: 'Email & phone',     done: true  },
+                    { label: 'Location',          done: true  },
+                    { label: 'Website',           done: true  },
+                    { label: 'GitHub & LinkedIn', done: true  },
+                    { label: 'Resume link',       done: false },
+                  ].map(({ label, done }) => (
+                    <div key={label} className="flex items-center gap-3">
+                      <div className={`w-4 h-4 rounded-full border flex items-center justify-center flex-shrink-0 ${
+                        done ? 'border-foreground/40' : 'border-border-subtle'
+                      }`}>
+                        {done && (
+                          <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 text-foreground" fill="none" stroke="currentColor" strokeWidth="3">
+                            <polyline points="20 6 9 17 4 12"/>
+                          </svg>
+                        )}
+                      </div>
+                      <span className={`text-xs ${done ? 'text-foreground' : 'text-muted-2'}`}>{label}</span>
+                      {!done && <span className="ml-auto text-[10px] text-muted-2 border border-border-subtle rounded-full px-2 py-0.5">Optional</span>}
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Card D - CTA card (full width) */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: 0.1 }} viewport={{ once: true }}
+              className="md:col-span-12 rounded-2xl border border-border-subtle overflow-hidden relative"
+              style={{ backgroundColor: 'var(--surface)' }}
+            >
+              <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)", backgroundSize: "20px 20px" }} />
+              <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-6 px-7 py-6">
+                <div>
+                  <p className="text-xs text-muted-2 uppercase tracking-wider mb-1">Ready to go</p>
+                  <h3 className="text-lg font-semibold tracking-tight">Create your digital ID card in 2 minutes</h3>
+                  <p className="text-sm text-muted mt-1">Free forever. No setup, no code, no friction.</p>
+                </div>
+                <div className="flex items-center gap-3 flex-shrink-0">
+                  <Link href="/demo" className="btn-ghost px-5 py-2.5 text-sm flex items-center gap-2 whitespace-nowrap">
+                    <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    View demo
+                  </Link>
+                  <Link href="/signup" className="btn-primary px-5 py-2.5 text-sm whitespace-nowrap">
+                    Create card free
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
