@@ -35,9 +35,26 @@ export default function PasswordCard({ entry, onEdit, onDelete }) {
 
   async function copyPassword() {
     try {
-      await navigator.clipboard.writeText(entry.password);
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(entry.password);
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = entry.password || "";
+        textArea.style.position = "absolute";
+        textArea.style.left = "-999999px";
+        document.body.prepend(textArea);
+        textArea.select();
+        try {
+          document.execCommand("copy");
+        } catch (err) {
+          throw err;
+        } finally {
+          textArea.remove();
+        }
+      }
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+      toast.success("Password copied");
     } catch {
       toast.error("Clipboard access denied");
     }
@@ -99,7 +116,7 @@ export default function PasswordCard({ entry, onEdit, onDelete }) {
 
       {/* Password row */}
       <div className="flex items-center gap-2 bg-background rounded-md px-3 py-2 border border-border-subtle">
-        <span className="flex-1 font-mono text-sm text-foreground select-none tracking-widest truncate">
+        <span className="flex-1 font-mono text-sm text-foreground tracking-widest truncate">
           {showPass ? entry.password : maskedPass}
         </span>
 
