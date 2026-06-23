@@ -1,167 +1,260 @@
 "use client";
 
-export default function DemoCardUI() {
+import { useState } from "react";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Briefcase,
+  Copy,
+  Check,
+  Pencil,
+  Trash2,
+  BadgeCheck,
+  Globe,
+  Share2,
+  FileText,
+  ExternalLink,
+} from "lucide-react";
+
+function GithubIcon({ className }) {
   return (
-    <div className="max-w-md mx-auto card overflow-hidden">
-      {/* Header */}
-      <div className="relative flex flex-col items-center text-center p-6">
-        {/* Accent glow */}
-        <div className="absolute -top-20 -right-20 h-40 w-40 bg-accent opacity-20 blur-3xl pointer-events-none" />
+    <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+      <path d="M12 .5C5.7.5.5 5.7.5 12c0 5.3 3.4 9.8 8.2 11.4.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.9 1.3 1.9 1.3 1.1 1.9 2.9 1.4 3.6 1.1.1-.8.4-1.4.7-1.7-2.7-.3-5.5-1.4-5.5-6.1 0-1.4.5-2.5 1.3-3.4-.1-.3-.6-1.6.1-3.3 0 0 1.1-.4 3.5 1.3 1-.3 2.1-.4 3.2-.4s2.2.1 3.2.4c2.4-1.7 3.5-1.3 3.5-1.3.7 1.7.2 3 .1 3.3.8.9 1.3 2 1.3 3.4 0 4.7-2.8 5.8-5.5 6.1.4.4.8 1.1.8 2.2v3.2c0 .3.2.7.8.6 4.8-1.6 8.2-6.1 8.2-11.4C23.5 5.7 18.3.5 12 .5z" />
+    </svg>
+  );
+}
 
-        <button className="flex items-center cursor-pointer justify-center gap-2 rounded-lg bg-red-500/10 text-red-400 px-4 py-2 text-sm hover:bg-red-500/20 transition">
-          Copy Share Link
-        </button>
+function LinkedinIcon({ className }) {
+  return (
+    <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+      <path d="M19 0h-14c-2.8 0-5 2.2-5 5v14c0 2.8 2.2 5 5 5h14c2.8 0 5-2.2 5-5v-14c0-2.8-2.2-5-5-5zM8 19H5V9h3v10zM6.5 7.7c-1 0-1.7-.8-1.7-1.7 0-.9.7-1.7 1.7-1.7s1.7.8 1.7 1.7c0 .9-.7 1.7-1.7 1.7zM19 19h-3v-5.4c0-1.3 0-3-1.8-3s-2.1 1.4-2.1 2.9V19h-3V9h2.8v1.4h.1c.4-.8 1.4-1.7 2.9-1.7 3.1 0 3.7 2 3.7 4.6V19z" />
+    </svg>
+  );
+}
 
-        <img
-          src="/john.png"
-          alt="Demo User"
-          className="relative w-24 h-24 mt-3 rounded-full object-cover border border-border mb-4"
-        />
+const DEMO = {
+  name: "John Doe",
+  role: "Software Developer",
+  bio: "Passionate developer building clean, secure, and scalable digital experiences. Open to new opportunities.",
+  email: "john@example.com",
+  phone: "+1 234 567 890",
+  location: "San Francisco, CA",
+  website: "johndoe.dev",
+  github: "github.com/johndoe",
+  linkedin: "linkedin.com/in/johndoe",
+};
 
-        <h2 className="text-xl font-semibold tracking-tight flex items-center gap-2">
-          <span className="relative flex items-center justify-center">
-            <span className="absolute inset-0 rounded-full bg-accent/30 blur-[6px]" />
-            <img
-              src="/check.png"
-              alt="Verified"
-              className="relative w-4 h-4 rounded-full bg-background ring-1 ring-accent/40 p-0.5"
-            />
+function ContactRow({ icon: Icon, label, value, href }) {
+  const Tag = href ? "a" : "div";
+  const props = href
+    ? { href, target: "_blank", rel: "noreferrer" }
+    : {};
+  return (
+    <Tag
+      {...props}
+      className="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-border-subtle bg-surface-2 hover:bg-surface hover:border-border transition-colors group cursor-default"
+      style={href ? { cursor: "pointer" } : {}}
+    >
+      <div className="w-7 h-7 rounded-lg bg-surface border border-border-subtle flex items-center justify-center flex-shrink-0">
+        <Icon size={13} className="text-muted" />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-[10px] text-muted-2">{label}</p>
+        <p className="text-xs font-medium truncate">{value}</p>
+      </div>
+      {href && (
+        <ExternalLink size={11} className="text-muted-2 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+      )}
+    </Tag>
+  );
+}
+
+export default function DemoPage() {
+  const [copied, setCopied] = useState(false);
+
+  function handleCopy() {
+    navigator.clipboard.writeText(window.location.origin + "/demo");
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
+  return (
+    <div className="min-h-screen bg-background flex flex-col items-center px-4 pt-14 pb-20">
+
+      {/* ── Page header ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="text-center mb-10"
+      >
+        <div className="inline-flex items-center gap-2 rounded-full border border-border-subtle bg-surface px-3.5 py-1.5 mb-4">
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-foreground opacity-30" />
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-foreground opacity-60" />
           </span>
-          John Doe
-        </h2>
+          <span className="text-xs text-muted-2">Demo - Digital ID Card</span>
+        </div>
+        <h1 className="text-2xl font-semibold tracking-tight">Your shareable identity</h1>
+        <p className="text-sm text-muted mt-1.5 max-w-xs mx-auto leading-relaxed">
+          One permanent link for your name, role, contacts, and social profiles.
+        </p>
+      </motion.div>
 
-        <p className="text-sm text-accent mt-1 flex  items-center gap-1">
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            viewBox="0 0 24 24"
+      {/* ── Card ── */}
+      <motion.div
+        initial={{ opacity: 0, y: 22 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+        className="w-full max-w-sm"
+      >
+        <div
+          className="rounded-2xl border border-border-subtle bg-surface overflow-hidden"
+          style={{ boxShadow: "0 0 0 1px rgba(255,255,255,0.04), 0 24px 56px rgba(0,0,0,0.5)" }}
+        >
+
+          {/* Cover band */}
+          <div
+            className="relative h-24"
+            style={{
+              backgroundColor: "var(--surface-2)",
+              backgroundImage: "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.07) 1px, transparent 0)",
+              backgroundSize: "16px 16px",
+            }}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 12h.01M6 12h.01M18 12h.01M4 7h16v10H4zM9 7V5a3 3 0 016 0v2"
-            />
-          </svg>
-          Software Developer
-        </p>
-      </div>
-
-      {/* Bio */}
-      <div className="px-6 pb-4">
-        <p className="text-sm text-muted leading-relaxed text-center">
-          Passionate developer building clean, secure, and scalable digital
-          experiences.
-        </p>
-      </div>
-
-      {/* Contact */}
-      <div className="mx-6 my-4 rounded-xl border border-border bg-surface p-4">
-        <h3 className="text-xs font-medium text-muted mb-3">
-          CONTACT INFORMATION
-        </h3>
-
-        <div className="space-y-3 text-sm">
-          <div className="flex items-center gap-3">
-            <svg
-              className="w-4 h-4 text-muted"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              viewBox="0 0 24 24"
+            {/* Share pill - top right */}
+            <button
+              onClick={handleCopy}
+              className="absolute top-3 right-3 flex items-center gap-1.5 rounded-lg border border-border-subtle px-2.5 py-1.5 text-xs font-medium text-muted-2 hover:text-foreground transition-colors"
+              style={{ backgroundColor: "var(--surface)" }}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3 8l9 6 9-6M4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z"
-              />
-            </svg>
-            <span>john@example.com</span>
+              {copied ? <Check size={11} /> : <Share2 size={11} />}
+              {copied ? "Copied!" : "Share"}
+            </button>
           </div>
 
-          <div className="flex items-center gap-3">
-            <svg
-              className="w-4 h-4 text-muted"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M2.25 6.75c0 7.87 6.38 14.25 14.25 14.25.98 0 1.78-.8 1.78-1.78v-2.64a1.78 1.78 0 00-1.4-1.74l-2.8-.56a1.78 1.78 0 00-1.76.74l-.62.93a11.1 11.1 0 01-5.2-5.2l.93-.62a1.78 1.78 0 00.74-1.76l-.56-2.8A1.78 1.78 0 006.78 2.25H4.03c-.98 0-1.78.8-1.78 1.78z"
-              />
-            </svg>
-            <span>+1 234 567 890</span>
+          {/* Body - avatar pulled up over cover */}
+          <div className="px-5 pb-5 -mt-10 relative z-20">
+
+            {/* Avatar + verified row */}
+            <div className="flex items-start justify-between" style={{ marginTop: "-28px" }}>
+              {/* Avatar */}
+              <div
+                className="w-14 h-14 rounded-2xl flex items-center justify-center text-base font-bold select-none flex-shrink-0"
+                style={{
+                  backgroundColor: "var(--surface-2)",
+                  border: "3px solid var(--surface)",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+                }}
+              >
+                JD
+              </div>
+
+              {/* Verified badge aligned to top right */}
+              <div className="mt-6 flex items-center gap-1.5 rounded-full border border-border-subtle px-2.5 py-1" style={{ backgroundColor: "var(--background)" }}>
+                <BadgeCheck size={11} className="text-foreground" />
+                <span className="text-[10px] font-medium">Verified</span>
+              </div>
+            </div>
+
+            {/* Name + role */}
+            <div className="mt-3 mb-4">
+              <h2 className="text-base font-semibold tracking-tight">{DEMO.name}</h2>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <Briefcase size={11} className="text-muted-2 flex-shrink-0" />
+                <p className="text-xs text-muted">{DEMO.role}</p>
+              </div>
+            </div>
+
+            {/* Bio */}
+            <p className="text-xs text-muted leading-relaxed border-t border-border-subtle pt-4 pb-4">
+              {DEMO.bio}
+            </p>
+
+            {/* Contact info */}
+            <div className="space-y-2 mb-4">
+              <ContactRow icon={Mail}   label="Email"    value={DEMO.email}    href={`mailto:${DEMO.email}`} />
+              <ContactRow icon={Phone}  label="Phone"    value={DEMO.phone}    href={`tel:${DEMO.phone}`} />
+              <ContactRow icon={MapPin} label="Location" value={DEMO.location} />
+              <ContactRow icon={Globe}  label="Website"  value={DEMO.website}  href={`https://${DEMO.website}`} />
+            </div>
+
+            {/* Social links */}
+            <div className="grid grid-cols-3 gap-2 mb-4">
+              {[
+                { label: "Resume",   icon: <FileText size={14} />,                      href: "#" },
+                { label: "GitHub",   icon: <GithubIcon className="w-3.5 h-3.5" />,      href: `https://${DEMO.github}` },
+                { label: "LinkedIn", icon: <LinkedinIcon className="w-3.5 h-3.5" />,    href: `https://${DEMO.linkedin}` },
+              ].map(({ label, icon, href }) => (
+                <a
+                  key={label}
+                  href={href === "#" ? undefined : href}
+                  target={href !== "#" ? "_blank" : undefined}
+                  rel="noreferrer"
+                  className="flex flex-col items-center gap-1.5 rounded-xl border border-border-subtle py-3 hover:border-border transition-colors"
+                  style={{ backgroundColor: "var(--surface-2)", cursor: href === "#" ? "default" : "pointer" }}
+                >
+                  <span className="text-muted">{icon}</span>
+                  <span className="text-[10px] text-muted-2">{label}</span>
+                </a>
+              ))}
+            </div>
+
+            {/* Action buttons */}
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                className="flex items-center justify-center gap-2 rounded-xl border border-border-subtle px-4 py-2.5 text-xs font-medium hover:border-border transition-colors"
+                style={{ backgroundColor: "var(--background)" }}
+              >
+                <Pencil size={12} className="text-muted" />
+                Edit card
+              </button>
+              <button
+                className="flex items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-xs font-medium transition-colors"
+                style={{
+                  backgroundColor: "rgba(248,113,113,0.06)",
+                  borderColor: "rgba(248,113,113,0.25)",
+                  color: "var(--danger)",
+                }}
+              >
+                <Trash2 size={12} />
+                Delete
+              </button>
+            </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <svg
-              className="w-4 h-4 text-muted"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              viewBox="0 0 24 24"
+          {/* Card footer */}
+          <div
+            className="border-t border-border-subtle py-3 px-5 flex items-center justify-between"
+            style={{ backgroundColor: "var(--surface-2)" }}
+          >
+            <p className="text-[10px] text-muted-2">IDVault · Secure Digital Identity</p>
+            <button
+              onClick={handleCopy}
+              className="flex items-center gap-1.5 text-[10px] text-muted-2 hover:text-foreground transition-colors"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 21s6-5.33 6-10a6 6 0 10-12 0c0 4.67 6 10 6 10z"
-              />
-              <circle cx="12" cy="11" r="2.5" />
-            </svg>
-            <span>San Francisco, CA</span>
+              {copied ? <Check size={10} /> : <Copy size={10} />}
+              {copied ? "Copied!" : "Copy link"}
+            </button>
           </div>
         </div>
-      </div>
 
-      {/* Social */}
-      <div className="px-6 pb-6">
-        <h3 className="text-xs font-medium text-muted mb-3 text-center">
-          CONNECT
-        </h3>
-
-        <div className="flex justify-center gap-3">
-          <div className="flex items-center gap-2 px-4 py-2 hover:scale-105 rounded-full ease-in-out cursor-pointer duration-300 border border-border text-sm transition">
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-            </svg>
-            Resume
-          </div>
-          <div className="flex items-center gap-2 px-4 py-2 hover:scale-105 rounded-full ease-in-out cursor-pointer duration-300 border border-border text-sm transition">
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M19 0h-14c-2.8 0-5 2.2-5 5v14c0 2.8 2.2 5 5 5h14c2.8 0 5-2.2 5-5v-14c0-2.8-2.2-5-5-5zM8 19H5V9h3v10zM6.5 7.7c-1 0-1.7-.8-1.7-1.7 0-.9.7-1.7 1.7-1.7s1.7.8 1.7 1.7c0 .9-.7 1.7-1.7 1.7zM19 19h-3v-5.4c0-1.3 0-3-1.8-3s-2.1 1.4-2.1 2.9V19h-3V9h2.8v1.4h.1c.4-.8 1.4-1.7 2.9-1.7 3.1 0 3.7 2 3.7 4.6V19z" />
-            </svg>
-            LinkedIn
-          </div>
-
-          <div className="flex items-center gap-2 px-4 py-2 hover:scale-105 rounded-full ease-in-out cursor-pointer duration-300 border border-border text-sm transition">
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 .5C5.7.5.5 5.7.5 12c0 5.3 3.4 9.8 8.2 11.4.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.9 1.3 1.9 1.3 1.1 1.9 2.9 1.4 3.6 1.1.1-.8.4-1.4.7-1.7-2.7-.3-5.5-1.4-5.5-6.1 0-1.4.5-2.5 1.3-3.4-.1-.3-.6-1.6.1-3.3 0 0 1.1-.4 3.5 1.3 1-.3 2.1-.4 3.2-.4s2.2.1 3.2.4c2.4-1.7 3.5-1.3 3.5-1.3.7 1.7.2 3 .1 3.3.8.9 1.3 2 1.3 3.4 0 4.7-2.8 5.8-5.5 6.1.4.4.8 1.1.8 2.2v3.2c0 .3.2.7.8.6 4.8-1.6 8.2-6.1 8.2-11.4C23.5 5.7 18.3.5 12 .5z" />
-            </svg>
-            GitHub
-          </div>
-        </div>
-      </div>
-
-      {/* Actions */}
-      <div className="px-6 pb-6 space-y-3">
-        <div className="flex gap-3">
-          <button className="flex-1 rounded-lg border border-border hover:scale-105 ease-in-out cursor-pointer duration-300  px-4 py-2 text-sm">
-            ✏️ Edit
-          </button>
-          <button className="flex-1 rounded-lg bg-red-500/10 hover:scale-105 ease-in-out cursor-pointer duration-300 text-red-400 px-4 py-2 text-sm">
-            🗑️ Delete
-          </button>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div className="border-t border-border bg-surface py-3 text-center">
-        <p className="text-xs text-muted">IDVault · Secure Digital Identity</p>
-      </div>
+        {/* CTA below card */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.55, duration: 0.4 }}
+          className="mt-6 text-center"
+        >
+          <p className="text-xs text-muted-2 mb-3">Want your own identity card?</p>
+          <Link href="/signup" className="btn-primary px-6 py-2.5 text-sm">
+            Create yours free →
+          </Link>
+        </motion.div>
+      </motion.div>
     </div>
   );
 }
