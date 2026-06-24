@@ -9,12 +9,11 @@ import {
   Mail,
   Phone,
   MapPin,
-  Users2,
-  Code2,
-  Link2,
   ImagePlus,
   CheckCircle2,
+  Link2,
 } from "lucide-react";
+import LinksBuilder from "../components/LinksBuilder";
 
 function Field({ icon: Icon, label, required, children }) {
   return (
@@ -32,6 +31,7 @@ function Field({ icon: Icon, label, required, children }) {
 export default function CreateCardPage() {
   const router = useRouter();
   const [form, setForm] = useState({});
+  const [links, setLinks] = useState([]);
   const [profileImage, setProfileImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [error, setError] = useState(null);
@@ -60,9 +60,7 @@ export default function CreateCardPage() {
     fd.append("contactEmail", form.contactEmail || "");
     fd.append("phone", form.phone || "");
     fd.append("location", form.location || "");
-    fd.append("linkedin", form.linkedin || "");
-    fd.append("github", form.github || "");
-    fd.append("resumeLink", form.resumeLink || "");
+    fd.append("links", JSON.stringify(links));
 
     if (e.target.profileImage.files[0]) {
       fd.append("profileImage", e.target.profileImage.files[0]);
@@ -170,19 +168,15 @@ export default function CreateCardPage() {
             </div>
 
             {/* ── Links ── */}
-            <div className="card-flat p-5 space-y-4">
-              <p className="text-xs font-medium text-muted uppercase tracking-wider">Links</p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Field icon={Users2} label="LinkedIn">
-                  <input name="linkedin" type="url" onChange={handleChange} className="input w-full px-3 py-2" placeholder="https://linkedin.com/in/…" />
-                </Field>
-                <Field icon={Code2} label="GitHub">
-                  <input name="github" type="url" onChange={handleChange} className="input w-full px-3 py-2" placeholder="https://github.com/…" />
-                </Field>
+            <div className="card-flat p-5 space-y-3">
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-medium text-muted uppercase tracking-wider flex items-center gap-1.5">
+                  <Link2 size={11} className="text-muted-2" />
+                  Links
+                </p>
+                <span className="text-[10px] text-muted-2">Up to 3</span>
               </div>
-              <Field icon={Link2} label="Resume Link">
-                <input name="resumeLink" type="url" onChange={handleChange} placeholder="https://drive.google.com/…" className="input w-full px-3 py-2" />
-              </Field>
+              <LinksBuilder value={links} onChange={setLinks} />
             </div>
 
             {/* Actions */}

@@ -37,6 +37,12 @@ export async function POST(req) {
     const github = formData.get("github");
     const imageFile = formData.get("profileImage");
     const resumeLink = formData.get("resumeLink");
+    // New flexible links array (JSON string)
+    let links = [];
+    try {
+      const raw = formData.get("links");
+      if (raw) links = JSON.parse(raw).filter((l) => l.label && l.url).slice(0, 3);
+    } catch { /* ignore malformed */ }
 
     if(phone && !/^\+?[1-9]\d{1,14}$/.test(phone)) {
       return NextResponse.json(
@@ -85,6 +91,7 @@ export async function POST(req) {
       linkedin,
       github,
       resumeLink,
+      links,
       profileImage: imageUrl,
     });
 

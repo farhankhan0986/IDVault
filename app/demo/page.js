@@ -143,15 +143,18 @@ export default function DemoPage() {
             <div className="flex items-start justify-between" style={{ marginTop: "-28px" }}>
               {/* Avatar */}
               <div
-                className="w-14 h-14 rounded-2xl flex items-center justify-center text-base font-bold select-none flex-shrink-0"
-                style={{
-                  backgroundColor: "var(--surface-2)",
-                  border: "3px solid var(--surface)",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
-                }}
-              >
-                JD
-              </div>
+  className="w-14 h-14 rounded-2xl overflow-hidden flex-shrink-0"
+  style={{
+    border: "3px solid var(--surface)",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+  }}
+>
+  <img
+    src="/john.png"
+    alt="John"
+    className="w-full h-full object-cover"
+  />
+</div>
 
               {/* Verified badge aligned to top right */}
               <div className="mt-6 flex items-center gap-1.5 rounded-full border border-border-subtle px-2.5 py-1" style={{ backgroundColor: "var(--background)" }}>

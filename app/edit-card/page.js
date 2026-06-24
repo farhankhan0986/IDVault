@@ -10,12 +10,11 @@ import {
   Mail,
   Phone,
   MapPin,
-  Users2,
-  Code2,
-  Link2,
   ImagePlus,
   Save,
+  Link2,
 } from "lucide-react";
+import LinksBuilder from "../components/LinksBuilder";
 
 function Field({ icon: Icon, label, children }) {
   return (
@@ -32,6 +31,7 @@ function Field({ icon: Icon, label, children }) {
 export default function EditCardPage() {
   const router = useRouter();
   const [form, setForm] = useState({});
+  const [links, setLinks] = useState([]);
   const [profileImage, setProfileImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -44,6 +44,19 @@ export default function EditCardPage() {
       const data = await res.json();
       setForm(data.card);
       setPreview(data.card.profileImage || null);
+
+      // Migrate old fixed fields into the new links array
+      const existing = data.card.links ?? [];
+      if (existing.length > 0) {
+        setLinks(existing);
+      } else {
+        const migrated = [];
+        if (data.card.linkedin) migrated.push({ label: "LinkedIn", url: data.card.linkedin });
+        if (data.card.github)   migrated.push({ label: "GitHub",   url: data.card.github });
+        if (data.card.resumeLink) migrated.push({ label: "Resume", url: data.card.resumeLink });
+        setLinks(migrated.slice(0, 3));
+      }
+
       setLoading(false);
     };
     fetchCard();
@@ -71,9 +84,7 @@ export default function EditCardPage() {
     fd.append("contactEmail", form.contactEmail || "");
     fd.append("phone", form.phone || "");
     fd.append("location", form.location || "");
-    fd.append("linkedin", form.linkedin || "");
-    fd.append("github", form.github || "");
-    fd.append("resumeLink", form.resumeLink || "");
+    fd.append("links", JSON.stringify(links));
     if (profileImage) fd.append("profileImage", profileImage);
 
     const res = await fetch("/api/cards/update", {
@@ -186,19 +197,15 @@ export default function EditCardPage() {
             </div>
 
             {/* ── Links ── */}
-            <div className="card-flat p-5 space-y-4">
-              <p className="text-xs font-medium text-muted uppercase tracking-wider">Links</p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Field icon={Users2} label="LinkedIn">
-                  <input name="linkedin" value={form.linkedin || ""} onChange={handleChange} className="input w-full px-3 py-2" />
-                </Field>
-                <Field icon={Code2} label="GitHub">
-                  <input name="github" value={form.github || ""} onChange={handleChange} className="input w-full px-3 py-2" />
-                </Field>
+            <div className="card-flat p-5 space-y-3">
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-medium text-muted uppercase tracking-wider flex items-center gap-1.5">
+                  <Link2 size={11} className="text-muted-2" />
+                  Links
+                </p>
+                <span className="text-[10px] text-muted-2">Up to 3</span>
               </div>
-              <Field icon={Link2} label="Resume Link">
-                <input name="resumeLink" value={form.resumeLink || ""} onChange={handleChange} className="input w-full px-3 py-2" />
-              </Field>
+              <LinksBuilder value={links} onChange={setLinks} />
             </div>
 
             {/* Actions */}

@@ -48,6 +48,12 @@ const DigitalCardSchema = new mongoose.Schema(
     profileImage: {
       type: String,
     },
+    // Flexible link slots — max 3, replaces the fixed linkedin/github/resumeLink in new cards
+    links: {
+      type: [{ label: String, url: String }],
+      default: [],
+      validate: [(v) => v.length <= 3, "Maximum 3 links allowed"],
+    },
     isPublic: {
       type: Boolean,
       default: false,

@@ -9,7 +9,6 @@ import {
   MapPin,
   Briefcase,
   Link2,
-  FileText,
   Pencil,
   Trash2,
   BadgeCheck,
@@ -17,23 +16,10 @@ import {
   Calendar,
   Share2,
   Lock,
+  ExternalLink,
 } from "lucide-react";
+import { LINK_PRESETS } from "./LinksBuilder";
 
-// Inline brand SVGs (lucide-react removed brand icons)
-function GithubIcon({ size = 13 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 .5C5.7.5.5 5.7.5 12c0 5.3 3.4 9.8 8.2 11.4.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.9 1.3 1.9 1.3 1.1 1.9 2.9 1.4 3.6 1.1.1-.8.4-1.4.7-1.7-2.7-.3-5.5-1.4-5.5-6.1 0-1.4.5-2.5 1.3-3.4-.1-.3-.6-1.6.1-3.3 0 0 1.1-.4 3.5 1.3 1-.3 2.1-.4 3.2-.4s2.2.1 3.2.4c2.4-1.7 3.5-1.3 3.5-1.3.7 1.7.2 3 .1 3.3.8.9 1.3 2 1.3 3.4 0 4.7-2.8 5.8-5.5 6.1.4.4.8 1.1.8 2.2v3.2c0 .3.2.7.8.6 4.8-1.6 8.2-6.1 8.2-11.4C23.5 5.7 18.3.5 12 .5z" />
-    </svg>
-  );
-}
-function LinkedinIcon({ size = 13 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M19 0h-14c-2.8 0-5 2.2-5 5v14c0 2.8 2.2 5 5 5h14c2.8 0 5-2.2 5-5v-14c0-2.8-2.2-5-5-5zM8 19H5V9h3v10zM6.5 7.7c-1 0-1.7-.8-1.7-1.7 0-.9.7-1.7 1.7-1.7s1.7.8 1.7 1.7c0 .9-.7 1.7-1.7 1.7zM19 19h-3v-5.4c0-1.3 0-3-1.8-3s-2.1 1.4-2.1 2.9V19h-3V9h2.8v1.4h.1c.4-.8 1.4-1.7 2.9-1.7 3.1 0 3.7 2 3.7 4.6V19z" />
-    </svg>
-  );
-}
 
 export default function CardUI({ card, showActions = false }) {
   const router = useRouter();
@@ -113,12 +99,6 @@ export default function CardUI({ card, showActions = false }) {
         year: "numeric",
       })
     : null;
-
-  const socialLinks = [
-    card.linkedin && { href: card.linkedin, icon: LinkedinIcon, label: "LinkedIn" },
-    card.github && { href: card.github, icon: GithubIcon, label: "GitHub" },
-    card.resumeLink && { href: card.resumeLink, icon: FileText, label: "Resume", isLucide: true },
-  ].filter(Boolean);
 
   const contactItems = [
     card.contactEmail && { icon: Mail, value: card.contactEmail, href: `mailto:${card.contactEmail}` },
@@ -241,28 +221,68 @@ export default function CardUI({ card, showActions = false }) {
         </div>
       )}
 
-      {/* ── SOCIAL LINKS ── */}
-      {socialLinks.length > 0 && (
-        <div className="px-4 pb-4">
-          <p className="text-xs font-medium text-muted-2 uppercase tracking-wider mb-2.5">
-            Links
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {socialLinks.map(({ href, icon: Icon, label, isLucide }) => (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border-subtle bg-background text-xs text-muted hover:text-foreground hover:border-border transition-all duration-150"
-              >
-                {isLucide ? <Icon size={13} /> : <Icon size={13} />}
-                {label}
-              </a>
-            ))}
+      {/* ── LINKS ── */}
+      {(() => {
+        // Merge new links array + old fixed fields (backward compat)
+        const allLinks = [];
+        if (card.links && card.links.length > 0) {
+          card.links.forEach((l) => {
+            if (l.url) allLinks.push({ label: l.label, url: l.url });
+          });
+        } else {
+          if (card.linkedin)   allLinks.push({ label: "LinkedIn",  url: card.linkedin });
+          if (card.github)     allLinks.push({ label: "GitHub",    url: card.github });
+          if (card.resumeLink) allLinks.push({ label: "Resume",    url: card.resumeLink });
+        }
+
+        if (allLinks.length === 0) return null;
+
+        return (
+          <div className="px-4 pb-5">
+            <p className="text-xs font-medium text-muted-2 uppercase tracking-wider mb-3">
+              Links
+            </p>
+            <div className="flex flex-col gap-2">
+              {allLinks.map(({ label, url }, i) => {
+                const preset =
+                  LINK_PRESETS.find(
+                    (p) => p.label.toLowerCase() === label?.toLowerCase()
+                  ) || LINK_PRESETS.find((p) => p.id === "custom");
+                const { Icon, color, lucide } = preset;
+                return (
+                  <a
+                    key={i}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 rounded-xl border border-border-subtle bg-background px-3.5 py-2.5 hover:border-border hover:bg-surface transition-all duration-150 group"
+                  >
+                    <div
+                      className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                      style={{
+                        backgroundColor: color + "18",
+                        border: `1px solid ${color}30`,
+                      }}
+                    >
+                      <span style={{ color }}>
+                        {lucide ? <Icon size={13} /> : <Icon />}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium text-foreground">{label}</p>
+                      <p className="text-[10px] text-muted-2 truncate">{url.replace(/^https?:\/\//, "")}</p>
+                    </div>
+                    <ExternalLink
+                      size={11}
+                      className="text-muted-2 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
+                    />
+                  </a>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* ── ACTIONS (owner-only) ── */}
       {showActions && (
