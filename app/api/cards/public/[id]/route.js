@@ -10,9 +10,9 @@ export async function GET(req, { params }) {
 
     const card = await Card.findById(id);
 
-    if (!card || !card.isActive) {
+    if (!card || !card.isPublic) {
       return NextResponse.json(
-        { message: "Card not found" },
+        { message: "Card not found or is private" },
         { status: 404 }
       );
     }

@@ -56,6 +56,16 @@ const DigitalCardSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    likesCount: {
+      type: Number,
+      default: 0,
+    },
+    // Stores IP or fingerprint strings to prevent duplicate likes
+    likedBy: {
+      type: [String],
+      default: [],
+      select: false, // never leak this to clients
+    },
   },
   { timestamps: true }
 );

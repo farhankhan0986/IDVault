@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -28,6 +28,8 @@ export default function VaultPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   // Auth + fetch
   useEffect(() => {
@@ -47,6 +49,17 @@ export default function VaultPage() {
     };
     init();
   }, [router]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleOutside(e) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleOutside);
+    return () => document.removeEventListener("mousedown", handleOutside);
+  }, []);
 
   async function fetchEntries() {
     try {
@@ -214,18 +227,71 @@ export default function VaultPage() {
                 />
               </div>
 
-              {/* Mobile category picker */}
-              <select
-                className="input px-3 py-2 md:hidden"
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-              >
-                {ALL_CATEGORIES.map((c) => (
-                  <option key={c} value={c}>
-                    {c} {counts[c] ? `(${counts[c]})` : ""}
-                  </option>
-                ))}
-              </select>
+              {/* Mobile category picker — custom dropdown */}
+              <div ref={dropdownRef} className="relative md:hidden">
+                <button
+                  onClick={() => setDropdownOpen((v) => !v)}
+                  className="input flex items-center justify-between gap-2 px-3 py-2 w-full min-w-[160px] cursor-pointer"
+                >
+                  <span className="text-sm text-foreground">
+                    {selectedCategory}
+                    {counts[selectedCategory] > 0 && (
+                      <span className="ml-1.5 text-xs text-muted-2 tabular-nums">
+                        ({counts[selectedCategory]})
+                      </span>
+                    )}
+                  </span>
+                  <svg
+                    viewBox="0 0 24 24"
+                    className={`w-4 h-4 text-muted-2 transition-transform duration-200 flex-shrink-0 ${dropdownOpen ? "rotate-180" : ""}`}
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </button>
+
+                <AnimatePresence>
+                  {dropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -6, scale: 0.97 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -6, scale: 0.97 }}
+                      transition={{ duration: 0.15, ease: "easeOut" }}
+                      className="absolute top-full right-0 mt-1.5 z-40 w-52 rounded-xl bg-surface border border-border-subtle shadow-2xl overflow-hidden py-1"
+                    >
+                      {ALL_CATEGORIES.map((cat) => (
+                        <button
+                          key={cat}
+                          onClick={() => {
+                            setSelectedCategory(cat);
+                            setDropdownOpen(false);
+                          }}
+                          className={`flex items-center justify-between w-full px-3 py-2 text-sm transition-colors duration-100 ${
+                            selectedCategory === cat
+                              ? "bg-surface-2 text-foreground"
+                              : "text-muted hover:bg-surface-2/60 hover:text-foreground"
+                          }`}
+                        >
+                          <span>{cat}</span>
+                          {counts[cat] > 0 && (
+                            <span
+                              className={`text-xs tabular-nums px-1.5 py-0.5 rounded-md ${
+                                selectedCategory === cat
+                                  ? "bg-background text-muted"
+                                  : "text-muted-2"
+                              }`}
+                            >
+                              {counts[cat]}
+                            </span>
+                          )}
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
 
             {/* Google accounts spotlight */}

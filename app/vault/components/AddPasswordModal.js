@@ -7,15 +7,18 @@ import { toast } from "sonner";
 // Each preset auto-fills label, category, and website user only types username+password
 const PRESETS = [
   // Google
+  { label: "Google Account", category: "Google",        website: "https://google.com",          color: "#ea4335", abbr: "G"  },
+  { label: "Google Work", category: "Google",        website: "https://google.com",          color: "#ea4335", abbr: "G"  },
   { label: "Gmail Personal", category: "Google",        website: "https://mail.google.com",          color: "#ea4335", abbr: "G"  },
   { label: "Gmail Work",     category: "Google",        website: "https://mail.google.com",          color: "#ea4335", abbr: "G"  },
   { label: "Google Drive",     category: "Google",        website: "https://drive.google.com",         color: "#4285f4", abbr: "GD" },
-  { label: "YouTube",          category: "Google",        website: "https://youtube.com",              color: "#ff0000", abbr: "YT" },
+  { label: "Google Drive Work",     category: "Google",        website: "https://drive.google.com",         color: "#4285f4", abbr: "GD" },
   // Social
   { label: "Instagram",        category: "Social",        website: "https://instagram.com",            color: "#e1306c", abbr: "In" },
   { label: "Facebook",         category: "Social",        website: "https://facebook.com",             color: "#1877f2", abbr: "Fb" },
-  { label: "Twitter / X",      category: "Social",        website: "https://x.com",                   color: "#000000", abbr: "X"  },
+  { label: "Twitter/ X",      category: "Social",        website: "https://x.com",                   color: "#FFFFFF", abbr: "X"  },
   { label: "LinkedIn",         category: "Social",        website: "https://linkedin.com",             color: "#0077b5", abbr: "Li" },
+  { label: "YouTube",          category: "Social",        website: "https://youtube.com",              color: "#ff0000", abbr: "YT" },
   { label: "Snapchat",         category: "Social",        website: "https://snapchat.com",             color: "#fffc00", abbr: "Sc", dark: true },
   { label: "WhatsApp",         category: "Social",        website: "https://web.whatsapp.com",         color: "#25d366", abbr: "Wa" },
   // Entertainment

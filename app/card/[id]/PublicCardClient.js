@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import CardUI from "../../components/CardUI";
 import Link from "next/link";
-import { Shield, Zap } from "lucide-react";
+import { Shield, Zap, Heart } from "lucide-react";
 
 function CardSkeleton() {
   return (
@@ -41,9 +41,14 @@ function CardSkeleton() {
   );
 }
 
+const LIKE_KEY = (id) => `idvault_liked_${id}`;
+
 export default function PublicCardClient({ id }) {
   const [card, setCard] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [likesCount, setLikesCount] = useState(0);
+  const [liked, setLiked] = useState(false);
+  const [liking, setLiking] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -53,13 +58,35 @@ export default function PublicCardClient({ id }) {
         if (res.ok) {
           const data = await res.json();
           setCard(data.card);
+          setLikesCount(data.card.likesCount ?? 0);
         }
       } finally {
         setLoading(false);
       }
     };
     fetchCard();
+
+    // Restore liked state from localStorage
+    const storedLiked = localStorage.getItem(LIKE_KEY(id));
+    if (storedLiked === "true") setLiked(true);
   }, [id]);
+
+  const handleLike = useCallback(async () => {
+    if (liking) return;
+    setLiking(true);
+    try {
+      const res = await fetch(`/api/cards/like/${id}`, { method: "POST" });
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setLikesCount(data.likesCount);
+      setLiked(data.liked);
+      localStorage.setItem(LIKE_KEY(id), String(data.liked));
+    } catch {
+      // silently fail — non-critical
+    } finally {
+      setLiking(false);
+    }
+  }, [id, liking]);
 
   if (loading) {
     return (
@@ -87,11 +114,40 @@ export default function PublicCardClient({ id }) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 gap-6">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 gap-5">
 
       {/* The card */}
       <div className="w-full max-w-sm">
         <CardUI card={card} showActions={false} />
+      </div>
+
+      {/* ── Like strip ── */}
+      <div className="w-full max-w-sm rounded-xl border border-border-subtle bg-surface px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Heart
+            size={14}
+            className={`transition-colors duration-200 ${liked ? "text-rose-400 fill-rose-400" : "text-muted-2"}`}
+          />
+          {/* <span className="text-sm font-semibold tabular-nums">{likesCount}</span>
+          <span className="text-xs text-muted-2">
+            {likesCount === 1 ? "like" : "likes"}
+          </span> */}
+        </div>
+        <button
+          onClick={handleLike}
+          disabled={liking}
+          className={`flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium border transition-all duration-200 disabled:opacity-60 ${
+            liked
+              ? "bg-rose-500/10 border-rose-500/30 text-rose-400 hover:bg-rose-500/20"
+              : "bg-background border-border-subtle text-muted hover:text-foreground hover:border-border"
+          }`}
+        >
+          <Heart
+            size={12}
+            className={`transition-all duration-200 ${liked ? "fill-rose-400" : ""} ${liking ? "animate-pulse" : ""}`}
+          />
+          {liked ? "Liked" : "Like this card"}
+        </button>
       </div>
 
       {/* Powered-by / CTA strip */}

@@ -12,6 +12,7 @@ import {
   X,
   ChevronDown,
   User,
+  Globe,
 } from "lucide-react";
 
 export default function Navbar() {
@@ -74,13 +75,17 @@ export default function Navbar() {
     ? user.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase()
     : "U";
 
+  // Always-visible public link
+  const PUBLIC_LINK = { href: "/public-vault", label: "Discover", icon: Globe };
+
   const NAV_LINKS = user
     ? [
         { href: "/dashboard",      label: "Dashboard", icon: LayoutDashboard },
         { href: "/vault",          label: "Vault",     icon: Lock },
         { href: "/dashboard/card", label: "My Card",   icon: CreditCard },
+        PUBLIC_LINK,
       ]
-    : [];
+    : [PUBLIC_LINK];
 
   return (
     <>
@@ -227,9 +232,20 @@ export default function Navbar() {
           {/* ── Mobile right side ── */}
           <div className="flex md:hidden items-center gap-2">
             {!user ? (
-              <Link href="/login" className="btn-primary px-4 py-1.5 text-sm">
-                Sign in
-              </Link>
+              <>
+                <Link
+                  href="/public-vault"
+                  className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-border-subtle text-xs text-muted hover:text-foreground hover:bg-surface transition-all ${
+                    isActive("/public-vault") ? "bg-surface text-foreground" : ""
+                  }`}
+                >
+                  <Globe size={12} />
+                  Discover
+                </Link>
+                <Link href="/login" className="btn-primary px-4 py-1.5 text-sm">
+                  Sign in
+                </Link>
+              </>
             ) : (
               <>
                 {/* Mobile avatar pill */}

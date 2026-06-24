@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
@@ -15,7 +16,7 @@ import {
   Globe,
   Calendar,
   Share2,
-  ExternalLink,
+  Lock,
 } from "lucide-react";
 
 // Inline brand SVGs (lucide-react removed brand icons)
@@ -36,6 +37,8 @@ function LinkedinIcon({ size = 13 }) {
 
 export default function CardUI({ card, showActions = false }) {
   const router = useRouter();
+  const [isPublic, setIsPublic] = useState(card?.isPublic ?? false);
+  const [togglingVisibility, setTogglingVisibility] = useState(false);
 
   if (!card) return null;
 
@@ -43,6 +46,24 @@ export default function CardUI({ card, showActions = false }) {
     typeof window !== "undefined"
       ? `${window.location.origin}/card/${card._id}`
       : "";
+
+  async function handleToggleVisibility() {
+    setTogglingVisibility(true);
+    try {
+      const res = await fetch("/api/cards/visibility", {
+        method: "PATCH",
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setIsPublic(data.isPublic);
+      toast.success(data.message);
+    } catch {
+      toast.error("Failed to update visibility");
+    } finally {
+      setTogglingVisibility(false);
+    }
+  }
 
   const handleCopy = async () => {
     if (typeof window === "undefined") return;
@@ -124,11 +145,17 @@ export default function CardUI({ card, showActions = false }) {
 
         {/* Visibility badge */}
         <div className="absolute top-3 right-3">
-          <span className="badge text-xs">
-            {card.isPublic ? (
+          <span
+            className={`badge text-xs ${
+              isPublic
+                ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                : "border-border-subtle text-muted-2"
+            }`}
+          >
+            {isPublic ? (
               <><Globe size={10} /> Public</>
             ) : (
-              <><Globe size={10} /> Private</>
+              <><Lock size={10} /> Private</>
             )}
           </span>
         </div>
@@ -240,15 +267,36 @@ export default function CardUI({ card, showActions = false }) {
       {/* ── ACTIONS (owner-only) ── */}
       {showActions && (
         <div className="px-4 pb-4 space-y-2">
-          {/* Share row */}
+
+          {/* Visibility toggle */}
           <button
-            onClick={handleCopy}
-            className="w-full flex items-center justify-center gap-2 rounded-lg border border-border-subtle bg-background px-4 py-2.5 text-xs text-muted hover:text-foreground hover:border-border transition"
+            onClick={handleToggleVisibility}
+            disabled={togglingVisibility}
+            className={`w-full flex items-center justify-center gap-2 rounded-lg border px-4 py-2.5 text-xs font-medium transition disabled:opacity-60 ${
+              isPublic
+                ? "border-emerald-500/30 bg-emerald-500/8 text-emerald-400 hover:bg-emerald-500/15"
+                : "border-border-subtle bg-background text-muted hover:text-foreground hover:border-border"
+            }`}
           >
-            <Share2 size={13} />
-            Copy public link
-            <Link2 size={11} className="ml-auto text-muted-2" />
+            {isPublic ? <Globe size={13} /> : <Lock size={13} />}
+            {togglingVisibility
+              ? "Updating…"
+              : isPublic
+              ? "Public · Click to make Private"
+              : "Private · Click to make Public"}
           </button>
+
+          {/* Share row — only shown when public */}
+          {isPublic && (
+            <button
+              onClick={handleCopy}
+              className="w-full flex items-center justify-center gap-2 rounded-lg border border-border-subtle bg-background px-4 py-2.5 text-xs text-muted hover:text-foreground hover:border-border transition"
+            >
+              <Share2 size={13} />
+              Copy public link
+              <Link2 size={11} className="ml-auto text-muted-2" />
+            </button>
+          )}
 
           {/* Edit / Delete row */}
           <div className="flex gap-2">
