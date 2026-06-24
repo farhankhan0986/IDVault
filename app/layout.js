@@ -27,7 +27,7 @@ export default function RootLayout({ children }) {
         <Navbar />
 
         {/* Main Content */}
-        <main className="max-w-6xl mx-auto py-2 py-2">{children}</main>
+        <main className="max-w-6xl mx-auto px-4 py-2">{children}</main>
         <Toaster
           richColors={false}
           theme="dark"

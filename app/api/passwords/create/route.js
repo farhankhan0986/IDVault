@@ -66,6 +66,15 @@ export async function POST(req) {
     );
   } catch (error) {
     console.error("[passwords/create]", error);
+    
+    // Check if the error is related to missing environment variables
+    if (error.message && error.message.includes("ENCRYPTION_SECRET")) {
+      return NextResponse.json(
+        { message: "Server configuration error: Missing ENCRYPTION_SECRET" },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json(
       { message: "Internal Server Error" },
       { status: 500 }

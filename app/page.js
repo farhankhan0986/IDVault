@@ -85,7 +85,7 @@ export default function HomePage() {
     <main className="bg-background text-foreground overflow-hidden">
 
       {/* ─── HERO ─── */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center bottom-12 overflow-hidden px-5 pt-24 pb-20">
+      <section className="relative min-h-screen flex flex-col items-center justify-center bottom-12 overflow-hidden px-5 pt-24 pb-5 lg:pb-20">
 
         {/* ── BG dot grid ── */}
         <div
@@ -325,7 +325,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── FEATURE CARDS ─── */}
-      <section className="py-24 px-5">
+      <section className="py-24 px-5 hidden lg:block" >
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
