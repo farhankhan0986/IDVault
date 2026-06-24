@@ -1,4 +1,3 @@
-// app/api/cards/update/route.js
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { connectDB } from "../../../../lib/db";
@@ -17,54 +16,75 @@ export async function PUT(req) {
 
     await connectDB();
 
-    const card = await Card.findOne({ userId });
-    if (!card) {
-      return NextResponse.json(
-        { message: "Card not found" },
-        { status: 404 }
-      );
-    }
-
     const formData = await req.formData();
 
+    const cardId      = formData.get("cardId");
+    const cardType    = formData.get("cardType");
+    const cardName    = formData.get("cardName");
     const fullName    = formData.get("fullName");
     const title       = formData.get("title");
     const bio         = formData.get("bio");
     const contactEmail= formData.get("contactEmail");
     const phone       = formData.get("phone");
     const location    = formData.get("location");
+    const institution = formData.get("institution");
+    const openToWork  = formData.get("openToWork");
     const linkedin    = formData.get("linkedin");
     const github      = formData.get("github");
     const resumeLink  = formData.get("resumeLink");
     const imageFile   = formData.get("profileImage");
 
-    // Parse flexible links — strip empty-url entries; keep up to 3
+    let techStack = null;
+    try {
+      const raw = formData.get("techStack");
+      if (raw !== null) techStack = JSON.parse(raw).filter(Boolean).slice(0, 8);
+    } catch { /* ignore */ }
+
+    // Find the specific card (or fall back to first card for old callers)
+    const query = cardId
+      ? { userId, _id: cardId }
+      : { userId };
+    const card = await Card.findOne(query);
+    if (!card) {
+      return NextResponse.json({ message: "Card not found" }, { status: 404 });
+    }
+
+    // Parse flexible links — strip empty-url entries, keep up to 3
     let links = null;
     try {
       const raw = formData.get("links");
       if (raw !== null) {
         links = JSON.parse(raw)
           .filter((l) => l && typeof l.label === "string" && typeof l.url === "string" && l.url.trim() !== "")
-          .map(({ label, url }) => ({ label: label.trim(), url: url.trim() })) // strip _id from old docs
+          .map(({ label, url }) => ({ label: label.trim(), url: url.trim() }))
           .slice(0, 3);
       }
     } catch { /* ignore malformed JSON */ }
 
-    // Build $set payload for scalar fields
     const $set = {};
-    if (fullName     !== null) $set.fullName     = fullName;
-    if (title        !== null) $set.title        = title;
-    if (bio          !== null) $set.bio          = bio;
-    if (contactEmail !== null) $set.contactEmail = contactEmail;
-    if (phone        !== null) $set.phone        = phone;
-    if (location     !== null) $set.location     = location;
-    if (linkedin     !== null) $set.linkedin     = linkedin;
-    if (github       !== null) $set.github       = github;
-    if (resumeLink   !== null) $set.resumeLink   = resumeLink;
-    // Always write links via $set to bypass Mongoose change-tracking for subdoc arrays
-    if (links !== null) $set.links = links;
+    if (cardType    !== null) $set.cardType    = cardType;
+    if (cardName    !== null) $set.cardName    = cardName;
+    if (fullName    !== null) $set.fullName    = fullName;
+    if (title       !== null) $set.title       = title;
+    if (bio         !== null) $set.bio         = bio;
+    if (contactEmail!== null) $set.contactEmail= contactEmail;
+    if (phone       !== null) $set.phone       = phone;
+    if (location    !== null) $set.location    = location;
+    if (institution !== null) $set.institution = institution;
+    if (openToWork  !== null) $set.openToWork  = openToWork === "true";
+    if (techStack   !== null) $set.techStack   = techStack;
+    if (linkedin    !== null) $set.linkedin    = linkedin;
+    if (github      !== null) $set.github      = github;
+    if (resumeLink  !== null) $set.resumeLink  = resumeLink;
 
-    // Upload new profile image if provided
+    if (links !== null) {
+      $set.links = links;
+      // Clear legacy fields so they don't reappear when new-style links are deleted
+      if (linkedin === null) $set.linkedin = "";
+      if (github === null) $set.github = "";
+      if (resumeLink === null) $set.resumeLink = "";
+    }
+
     if (imageFile && imageFile.size > 0) {
       const buffer = Buffer.from(await imageFile.arrayBuffer());
       const uploadResult = await new Promise((resolve, reject) => {
@@ -76,8 +96,7 @@ export async function PUT(req) {
       $set.profileImage = uploadResult.secure_url;
     }
 
-    // Direct MongoDB $set — avoids all Mongoose change-tracking issues
-    await Card.updateOne({ userId }, { $set });
+    await Card.updateOne({ _id: card._id }, { $set });
 
     return NextResponse.json(
       { message: "Card updated successfully" },

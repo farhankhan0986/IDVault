@@ -16,35 +16,33 @@ export async function POST(req) {
 
     await connectDB();
 
-    // Prevent multiple cards
-    const existing = await Card.findOne({ userId });
-    if (existing) {
-      return NextResponse.json(
-        { message: "Card already exists" },
-        { status: 400 }
-      );
-    }
-
     const formData = await req.formData();
 
-    const fullName = formData.get("fullName");
-    const title = formData.get("title");
-    const bio = formData.get("bio");
+    const cardType   = formData.get("cardType")   || "professional";
+    const cardName   = formData.get("cardName")   || "";
+    const fullName   = formData.get("fullName");
+    const title      = formData.get("title");
+    const bio        = formData.get("bio");
     const contactEmail = formData.get("contactEmail");
-    const phone = formData.get("phone");
-    const location = formData.get("location");
-    const linkedin = formData.get("linkedin");
-    const github = formData.get("github");
-    const imageFile = formData.get("profileImage");
-    const resumeLink = formData.get("resumeLink");
-    // New flexible links array (JSON string)
+    const phone      = formData.get("phone");
+    const location   = formData.get("location");
+    const institution = formData.get("institution") || "";
+    const openToWork  = formData.get("openToWork") === "true";
+    const imageFile  = formData.get("profileImage");
+
+    let techStack = [];
+    try {
+      const raw = formData.get("techStack");
+      if (raw) techStack = JSON.parse(raw).filter(Boolean).slice(0, 8);
+    } catch { /* ignore */ }
+
     let links = [];
     try {
       const raw = formData.get("links");
       if (raw) links = JSON.parse(raw).filter((l) => l.label && l.url).slice(0, 3);
     } catch { /* ignore malformed */ }
 
-    if(phone && !/^\+?[1-9]\d{1,14}$/.test(phone)) {
+    if (phone && !/^\+?[1-9]\d{1,14}$/.test(phone)) {
       return NextResponse.json(
         { message: "Invalid phone number format" },
         { status: 400 }
@@ -58,39 +56,32 @@ export async function POST(req) {
       );
     }
 
-    // ⬆️ Upload image to Cloudinary
     let imageUrl = "/default-avatar.png";
 
     if (imageFile && imageFile.size > 0) {
       const buffer = Buffer.from(await imageFile.arrayBuffer());
-
       const uploadResult = await new Promise((resolve, reject) => {
         cloudinary.uploader.upload_stream(
-          {
-            folder: "idvault/cards",
-            resource_type: "image",
-          },
-          (err, result) => {
-            if (err) reject(err);
-            else resolve(result);
-          }
+          { folder: "idvault/cards", resource_type: "image" },
+          (err, result) => { if (err) reject(err); else resolve(result); }
         ).end(buffer);
       });
-
       imageUrl = uploadResult.secure_url;
     }
 
     await Card.create({
       userId,
+      cardType,
+      cardName,
       fullName,
       title,
       bio,
       contactEmail,
       phone,
       location,
-      linkedin,
-      github,
-      resumeLink,
+      institution,
+      openToWork,
+      techStack,
       links,
       profileImage: imageUrl,
     });

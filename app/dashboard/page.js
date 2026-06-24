@@ -47,6 +47,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const [user, setUser]           = useState(null);
   const [card, setCard]           = useState(null);
+  const [cardCount, setCardCount] = useState(0);
   const [vaultCount, setVaultCount] = useState(null);
   const [favorites, setFavorites] = useState(0);
   const [loading, setLoading]     = useState(true);
@@ -79,7 +80,12 @@ export default function DashboardPage() {
           fetch("/api/passwords/list",  { credentials: "include" }),
         ]);
 
-        setCard(cardRes.ok ? (await cardRes.json()).card : null);
+        if (cardRes.ok) {
+          const cardData = await cardRes.json();
+          const cards = cardData.cards || [];
+          setCardCount(cards.length);
+          setCard(cards[0] || null);
+        }
 
         if (vaultRes.ok) {
           const vd = await vaultRes.json();
@@ -134,11 +140,11 @@ export default function DashboardPage() {
     },
     {
       icon: CreditCard,
-      label: "Digital ID card",
-      value: card ? "Active" : "None",
-      sub: card ? "View or edit your card" : "Create your first card",
-      href: card ? "/dashboard/card" : "/create-card",
-      cta: card ? "View card" : "Create card",
+      label: "Digital cards",
+      value: cardCount > 0 ? cardCount : "None",
+      sub: cardCount > 0 ? `${cardCount} card${cardCount !== 1 ? "s" : ""} created` : "Create your first card",
+      href: cardCount > 0 ? "/dashboard/card" : "/create-card",
+      cta: cardCount > 0 ? "View cards" : "Create card",
     },
     {
       icon: Star,
@@ -153,7 +159,7 @@ export default function DashboardPage() {
   // ── Quick actions ────────────────────────────────────────────────────────
   const ACTIONS = [
     { icon: KeyRound,    label: "Add password",   href: "/vault",        primary: true },
-    { icon: UserCircle2, label: card ? "Edit ID card" : "Create ID card", href: card ? "/dashboard/card" : "/create-card" },
+    { icon: UserCircle2, label: cardCount > 0 ? "My cards" : "Create ID card", href: cardCount > 0 ? "/dashboard/card" : "/create-card" },
   ];
 
   return (
@@ -280,10 +286,10 @@ export default function DashboardPage() {
       {/* ── ID Card section ── */}
       <motion.div initial="hidden" animate="show" variants={fadeUp} custom={6}>
         <div className="flex items-center justify-between mb-4">
-          <p className="text-xs font-medium text-muted-2 uppercase tracking-wider">Your ID card</p>
-          {card && (
+          <p className="text-xs font-medium text-muted-2 uppercase tracking-wider">Your ID cards</p>
+          {cardCount > 0 && (
             <Link href="/dashboard/card" className="flex items-center gap-1 text-xs text-muted-2 hover:text-foreground transition-colors">
-              Manage <ChevronRight size={12} />
+              View all ({cardCount}) <ChevronRight size={12} />
             </Link>
           )}
         </div>

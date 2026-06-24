@@ -1,12 +1,24 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { BadgeCheck, Briefcase, ArrowRight, MapPin } from "lucide-react";
+import { BadgeCheck, Briefcase, ArrowRight, MapPin, Code2, Palette, GraduationCap, Building2 } from "lucide-react";
+import { getCardType } from "../../lib/cardTypes";
+
+const TYPE_ICONS = {
+  professional: Briefcase,
+  developer:    Code2,
+  creative:     Palette,
+  student:      GraduationCap,
+  business:     Building2,
+};
 
 export default function CardPreview({ card }) {
   const router = useRouter();
 
   if (!card) return null;
+
+  const typeConfig = getCardType(card.cardType);
+  const TypeIcon   = TYPE_ICONS[card.cardType] || Briefcase;
 
   return (
     <div
@@ -28,7 +40,20 @@ export default function CardPreview({ card }) {
 
         {/* Info */}
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium truncate">{card.fullName}</p>
+          <div className="flex items-center gap-2 mb-0.5">
+            <p className="text-sm font-medium truncate">{card.fullName}</p>
+            <span
+              className="flex items-center gap-0.5 rounded-full border px-1.5 py-0.5 text-[9px] font-medium flex-shrink-0"
+              style={{
+                color: typeConfig.color,
+                borderColor: typeConfig.color + "40",
+                backgroundColor: typeConfig.color + "10",
+              }}
+            >
+              <TypeIcon size={8} style={{ color: typeConfig.color }} />
+              {typeConfig.label}
+            </span>
+          </div>
           {card.title && (
             <div className="flex items-center gap-1 mt-0.5">
               <Briefcase size={10} className="text-muted-2 flex-shrink-0" />
@@ -51,7 +76,7 @@ export default function CardPreview({ card }) {
       </div>
 
       <p className="mt-3 text-xs text-muted-2">
-        View or manage your digital card →
+        View or manage your digital cards →
       </p>
     </div>
   );

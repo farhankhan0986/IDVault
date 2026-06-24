@@ -8,8 +8,9 @@ export async function GET(req) {
     await connectDB();
 
     const { searchParams } = new URL(req.url);
-    const sort = searchParams.get("sort") || "recent"; // "recent" | "popular"
-    const q = searchParams.get("q") || "";
+    const sort     = searchParams.get("sort")     || "recent";
+    const q        = searchParams.get("q")        || "";
+    const cardType = searchParams.get("cardType") || "";
 
     const query = { isPublic: true };
 
@@ -19,7 +20,12 @@ export async function GET(req) {
         { fullName: regex },
         { title: regex },
         { location: regex },
+        { cardName: regex },
       ];
+    }
+
+    if (cardType && cardType !== "all") {
+      query.cardType = cardType;
     }
 
     const sortOption =
@@ -27,7 +33,7 @@ export async function GET(req) {
 
     const cards = await Card.find(query)
       .sort(sortOption)
-      .select("-likedBy") // never expose IP list
+      .select("-likedBy")
       .limit(100)
       .lean();
 

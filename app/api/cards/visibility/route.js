@@ -13,7 +13,7 @@ function getAuthUserId(req) {
   }
 }
 
-// PATCH /api/cards/visibility — toggle isPublic for the logged-in user's card
+// PATCH /api/cards/visibility — toggle isPublic for a specific card
 export async function PATCH(req) {
   try {
     const userId = getAuthUserId(req);
@@ -23,7 +23,17 @@ export async function PATCH(req) {
 
     await connectDB();
 
-    const card = await Card.findOne({ userId });
+    let cardId;
+    try {
+      const body = await req.json();
+      cardId = body?.id;
+    } catch { /* no body */ }
+
+    const query = cardId
+      ? { userId, _id: cardId }
+      : { userId };
+
+    const card = await Card.findOne(query);
     if (!card) {
       return NextResponse.json({ message: "Card not found" }, { status: 404 });
     }
@@ -32,7 +42,10 @@ export async function PATCH(req) {
     await card.save();
 
     return NextResponse.json(
-      { message: card.isPublic ? "Card is now public" : "Card is now private", isPublic: card.isPublic },
+      {
+        message: card.isPublic ? "Card is now public" : "Card is now private",
+        isPublic: card.isPublic,
+      },
       { status: 200 }
     );
   } catch (error) {

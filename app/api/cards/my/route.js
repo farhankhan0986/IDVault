@@ -21,15 +21,11 @@ export async function GET(req) {
 
     await connectDB();
 
-    const userCard = await Card.findOne({ userId });
+    const cards = await Card.find({ userId }).sort({ createdAt: -1 });
 
-    if (!userCard) {
-      return NextResponse.json({ card: null }, { status: 200 });
-    }
-
-    return NextResponse.json({ card: userCard }, { status: 200 });
+    return NextResponse.json({ cards }, { status: 200 });
   } catch (error) {
-    console.error("Error fetching user card:", error);
+    console.error("Error fetching user cards:", error);
     return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
   }
 }

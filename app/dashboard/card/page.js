@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import CardUI from "@/app/components/CardUI";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Plus, CreditCard } from "lucide-react";
 
 function CardSkeleton() {
   return (
@@ -19,7 +20,7 @@ function CardSkeleton() {
       </div>
       <div className="mx-4 mb-4 rounded-xl border border-border-subtle overflow-hidden">
         <div className="h-8 bg-surface-2" />
-        {[1, 2, 3].map((i) => (
+        {[1, 2].map((i) => (
           <div key={i} className="flex items-center gap-3 px-4 py-2.5 border-t border-border-subtle">
             <div className="w-7 h-7 rounded-md bg-border flex-shrink-0" />
             <div className="flex-1 h-3 bg-border rounded" />
@@ -33,72 +34,88 @@ function CardSkeleton() {
   );
 }
 
-export default function MyCardPage() {
+export default function MyCardsPage() {
   const router = useRouter();
-  const [card, setCard] = useState(null);
+  const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchCard = async () => {
+    const fetchCards = async () => {
       try {
         const res = await fetch("/api/cards/my", { credentials: "include" });
         if (!res.ok) { router.push("/dashboard"); return; }
         const data = await res.json();
-        if (data.card) setCard(data.card);
+        setCards(data.cards || []);
       } catch {
         router.push("/dashboard");
       } finally {
         setLoading(false);
       }
     };
-    fetchCard();
+    fetchCards();
   }, [router]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen py-8 px-4">
-        <div className="max-w-sm mx-auto">
-          <CardSkeleton />
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen py-8 px-4">
-      <div className="max-w-sm mx-auto space-y-6">
+      <div className="max-w-4xl mx-auto space-y-6">
 
         {/* Header */}
-        <div>
-          <h1 className="text-xl font-semibold tracking-tight">Your Digital Card</h1>
-          <p className="text-xs text-muted mt-1">
-            This is how your identity appears on IDVault
-          </p>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-xl font-semibold tracking-tight">Your Digital Cards</h1>
+            <p className="text-xs text-muted mt-1">
+              {loading
+                ? "Loading…"
+                : cards.length === 0
+                ? "No cards yet — create your first one"
+                : `${cards.length} card${cards.length !== 1 ? "s" : ""}`}
+            </p>
+          </div>
+          <Link
+            href="/create-card"
+            className="btn-primary flex items-center gap-2 px-4 py-2 text-sm flex-shrink-0"
+          >
+            <Plus size={14} />
+            New card
+          </Link>
         </div>
 
-        {/* Card or empty state */}
-        {card ? (
-          <CardUI card={card} showActions />
-        ) : (
-          <div className="card-flat p-8 text-center">
-            <p className="text-sm text-muted mb-4">No card found.</p>
-            <button
-              onClick={() => router.push("/create-card")}
-              className="btn-primary px-5 py-2 text-sm"
-            >
+        {/* Cards grid */}
+        {loading ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <CardSkeleton />
+            <CardSkeleton />
+          </div>
+        ) : cards.length === 0 ? (
+          <div className="rounded-2xl border border-border-subtle border-dashed flex flex-col items-center justify-center py-20 px-6 text-center bg-surface">
+            <div className="w-12 h-12 rounded-2xl bg-surface-2 border border-border-subtle flex items-center justify-center mb-4">
+              <CreditCard size={20} className="text-muted-2" />
+            </div>
+            <p className="text-sm font-medium mb-1">No cards yet</p>
+            <p className="text-xs text-muted-2 mb-6 max-w-xs leading-relaxed">
+              Create a shareable digital identity card with your name, role, contact info, and social links.
+            </p>
+            <Link href="/create-card" className="btn-primary px-6 py-2.5 text-sm flex items-center gap-2">
+              <Plus size={14} />
               Create your first card
-            </button>
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {cards.map((card) => (
+              <CardUI key={card._id} card={card} showActions />
+            ))}
           </div>
         )}
 
         {/* Back link */}
         <button
-  onClick={() => router.push("/dashboard")}
-  className="inline-flex items-center gap-2 rounded-lg border border-border-subtle bg-surface px-3 py-2 text-sm font-medium text-muted transition-all duration-200 hover:bg-surface-2 hover:text-foreground hover:shadow-sm"
->
-  <ArrowLeft size={16} />
-  <span>Back to Dashboard</span>
-</button>
+          onClick={() => router.push("/dashboard")}
+          className="inline-flex items-center gap-2 rounded-lg border border-border-subtle bg-surface px-3 py-2 text-sm font-medium text-muted transition-all duration-200 hover:bg-surface-2 hover:text-foreground hover:shadow-sm"
+        >
+          <ArrowLeft size={16} />
+          Back to Dashboard
+        </button>
       </div>
     </div>
   );

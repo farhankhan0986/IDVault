@@ -15,7 +15,14 @@ export async function DELETE(req) {
 
     await connectDB();
 
-    const deleted = await Card.findOneAndDelete({ userId });
+    const { searchParams } = new URL(req.url);
+    const cardId = searchParams.get("id");
+
+    const query = cardId
+      ? { userId, _id: cardId }
+      : { userId };
+
+    const deleted = await Card.findOneAndDelete(query);
 
     if (!deleted) {
       return NextResponse.json(

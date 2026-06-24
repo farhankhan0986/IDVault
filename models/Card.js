@@ -6,7 +6,19 @@ const DigitalCardSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      unique: true,
+      // NOTE: unique index removed to allow multiple cards per user.
+      // If upgrading an existing DB, drop the old index:
+      //   db.digitalcards.dropIndex("userId_1")
+    },
+    cardType: {
+      type: String,
+      enum: ["professional", "developer", "creative", "student", "business"],
+      default: "professional",
+    },
+    cardName: {
+      type: String,
+      trim: true,
+      maxlength: 50,
     },
     fullName: {
       type: String,
@@ -48,12 +60,28 @@ const DigitalCardSchema = new mongoose.Schema(
     profileImage: {
       type: String,
     },
-    // Flexible link slots — max 3, replaces the fixed linkedin/github/resumeLink in new cards
+    // Flexible link slots — max 3
     links: {
       type: [{ label: String, url: String }],
       default: [],
       validate: [(v) => v.length <= 3, "Maximum 3 links allowed"],
     },
+    // Type-specific extra fields
+    techStack: {
+      type: [String],
+      default: [],
+      validate: [(v) => v.length <= 8, "Max 8 items"],
+    },
+    institution: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    openToWork: {
+      type: Boolean,
+      default: false,
+    },
+
     isPublic: {
       type: Boolean,
       default: false,
@@ -66,11 +94,10 @@ const DigitalCardSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    // Stores IP or fingerprint strings to prevent duplicate likes
     likedBy: {
       type: [String],
       default: [],
-      select: false, // never leak this to clients
+      select: false,
     },
   },
   { timestamps: true }
