@@ -342,7 +342,7 @@ export default function PublicVaultPage() {
         </div>
 
         {/* ── Card Type Filter ── */}
-        <div className="flex flex-wrap gap-2 mb-7">
+        {/* <div className="flex flex-wrap gap-2 mb-7">
           {typeFilters.map(({ id, label, color }) => {
             const active = cardType === id;
             return (
@@ -368,7 +368,7 @@ export default function PublicVaultPage() {
               </button>
             );
           })}
-        </div>
+        </div> */}
 
         {/* ── Grid ── */}
         {loading ? (

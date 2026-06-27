@@ -56,6 +56,15 @@ export async function POST(req) {
       );
     }
 
+    // One card per user
+    const existing = await Card.findOne({ userId });
+    if (existing) {
+      return NextResponse.json(
+        { message: "You already have a card. Edit your existing card instead." },
+        { status: 409 }
+      );
+    }
+
     let imageUrl = "/default-avatar.png";
 
     if (imageFile && imageFile.size > 0) {
