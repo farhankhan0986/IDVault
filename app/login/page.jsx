@@ -25,18 +25,44 @@ function EyeIcon({ open }) {
   );
 }
 
+function validate(form) {
+  const errs = {};
+  if (!form.floating_email.trim()) {
+    errs.email = "Email is required";
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.floating_email.trim())) {
+    errs.email = "Enter a valid email address";
+  }
+  if (!form.floating_password) {
+    errs.password = "Password is required";
+  } else if (form.floating_password.length < 6) {
+    errs.password = "Password must be at least 6 characters";
+  }
+  return errs;
+}
+
 export default function LoginPage() {
   const router = useRouter();
   const [form, setForm] = useState({ floating_email: "", floating_password: "" });
-  const [error, setError]   = useState("");
+  const [errors, setErrors] = useState({});
+  const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const updated = { ...form, [e.target.name]: e.target.value };
+    setForm(updated);
+    // clear field error on change
+    if (errors[e.target.name === "floating_email" ? "email" : "password"]) {
+      setErrors((prev) => ({ ...prev, [e.target.name === "floating_email" ? "email" : "password"]: "" }));
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setServerError("");
+    const errs = validate(form);
+    if (Object.keys(errs).length) { setErrors(errs); return; }
+    setErrors({});
     setLoading(true);
     try {
       const res  = await fetch("/api/auth/login", {
@@ -45,11 +71,11 @@ export default function LoginPage() {
         body: JSON.stringify(form),
       });
       const data = await res.json();
-      if (!res.ok) { setError(data.message || "Invalid credentials"); return; }
+      if (!res.ok) { setServerError(data.message || "Invalid credentials"); return; }
       router.refresh();
       router.push("/dashboard");
     } catch {
-      setError("Server error. Please try again.");
+      setServerError("Server error. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -136,17 +162,17 @@ export default function LoginPage() {
             <p className="text-sm text-muted mt-1.5">Sign in to your vault</p>
           </div>
 
-          {/* Error */}
-          {error && (
+          {/* Server error */}
+          {serverError && (
             <div className="mb-4 flex items-start gap-2.5 rounded-lg bg-danger/5 border border-danger/20 px-3.5 py-2.5">
               <svg viewBox="0 0 24 24" className="w-4 h-4 text-danger flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
               </svg>
-              <p className="text-xs text-danger">{error}</p>
+              <p className="text-xs text-danger">{serverError}</p>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
 
             {/* Email */}
             <div>
@@ -158,12 +184,12 @@ export default function LoginPage() {
                 name="floating_email"
                 value={form.floating_email}
                 onChange={handleChange}
-                required
                 autoFocus
                 autoComplete="email"
                 placeholder="you@example.com"
-                className="input w-full px-3.5 py-2.5"
+                className={`input w-full px-3.5 py-2.5 ${errors.email ? "border-danger/50 focus:border-danger/70" : ""}`}
               />
+              {errors.email && <p className="text-xs text-danger mt-1.5">{errors.email}</p>}
             </div>
 
             {/* Password */}
@@ -177,10 +203,9 @@ export default function LoginPage() {
                   name="floating_password"
                   value={form.floating_password}
                   onChange={handleChange}
-                  required
                   autoComplete="current-password"
                   placeholder="••••••••••••"
-                  className="input w-full px-3.5 py-2.5 pr-11"
+                  className={`input w-full px-3.5 py-2.5 pr-11 ${errors.password ? "border-danger/50 focus:border-danger/70" : ""}`}
                 />
                 <button
                   type="button"
@@ -191,6 +216,7 @@ export default function LoginPage() {
                   <EyeIcon open={showPass} />
                 </button>
               </div>
+              {errors.password && <p className="text-xs text-danger mt-1.5">{errors.password}</p>}
             </div>
 
             {/* Submit */}

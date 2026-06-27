@@ -125,6 +125,27 @@ function TypeSection({ type, techStack, setTechStack, institution, setInstitutio
   );
 }
 
+function validateCard(form, links) {
+  const errs = {};
+  if (!form.fullName?.trim()) {
+    errs.fullName = "Full name is required";
+  } else if (form.fullName.trim().length < 2) {
+    errs.fullName = "Name must be at least 2 characters";
+  }
+  if (form.contactEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.contactEmail.trim())) {
+    errs.contactEmail = "Enter a valid email address";
+  }
+  if (form.phone && !/^\+?[1-9]\d{6,14}$/.test(form.phone.replace(/[\s\-()]/g, ""))) {
+    errs.phone = "Enter a valid phone number (e.g. +91 98765 43210)";
+  }
+  links.forEach((l, i) => {
+    if (l.url && !/^https?:\/\/.+\..+/.test(l.url.trim())) {
+      errs[`link_${i}`] = "Enter a valid URL starting with http:// or https://";
+    }
+  });
+  return errs;
+}
+
 /* ── Page ────────────────────────────────────────────────────────── */
 export default function CreateCardPage() {
   const router = useRouter();
@@ -137,16 +158,25 @@ export default function CreateCardPage() {
   const [openToWork, setOpenToWork]   = useState(false);
   const [profileImage, setProfileImage] = useState(null);
   const [previewUrl, setPreviewUrl]     = useState(null);
+  const [fieldErrors, setFieldErrors] = useState({});
   const [error, setError]   = useState(null);
   const [saving, setSaving] = useState(false);
 
   const selectedType = CARD_TYPES.find((t) => t.id === cardType) || CARD_TYPES[0];
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+    if (fieldErrors[e.target.name]) setFieldErrors((prev) => ({ ...prev, [e.target.name]: "" }));
+  };
 
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      setFieldErrors((prev) => ({ ...prev, image: "Image must be under 5MB" }));
+      return;
+    }
+    setFieldErrors((prev) => ({ ...prev, image: "" }));
     setProfileImage(file);
     setPreviewUrl(URL.createObjectURL(file));
   };
@@ -154,6 +184,9 @@ export default function CreateCardPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+    const errs = validateCard(form, links);
+    if (Object.keys(errs).length) { setFieldErrors(errs); return; }
+    setFieldErrors({});
     setSaving(true);
 
     const fd = new FormData();
@@ -198,7 +231,7 @@ export default function CreateCardPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           <div className="space-y-5">
 
             {/* ── Card Type ── */}
@@ -277,6 +310,7 @@ export default function CreateCardPage() {
                 </div>
                 <input type="file" name="profileImage" accept="image/*" className="hidden" onChange={handleImageChange} />
               </label>
+              {fieldErrors.image && <p className="text-xs text-danger mt-2">{fieldErrors.image}</p>}
             </div>
 
             {/* ── Identity ── */}
@@ -286,11 +320,11 @@ export default function CreateCardPage() {
                 <Field icon={User} label="Full name" required>
                   <input
                     name="fullName"
-                    required
                     onChange={handleChange}
-                    className="input w-full px-3 py-2"
-                    placeholder="Farhan Khan"
+                    className={`input w-full px-3 py-2 ${fieldErrors.fullName ? "border-danger/50" : ""}`}
+                    placeholder="John Doe"
                   />
+                  {fieldErrors.fullName && <p className="text-xs text-danger mt-1">{fieldErrors.fullName}</p>}
                 </Field>
                 <Field icon={Briefcase} label={selectedType.titleLabel || "Title / Role"}>
                   <input
@@ -330,10 +364,24 @@ export default function CreateCardPage() {
               <p className="text-xs font-medium text-muted uppercase tracking-wider">Contact</p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Field icon={Mail} label="Public email">
-                  <input name="contactEmail" type="email" onChange={handleChange} className="input w-full px-3 py-2" placeholder="you@example.com" />
+                  <input
+                    name="contactEmail"
+                    type="email"
+                    onChange={handleChange}
+                    className={`input w-full px-3 py-2 ${fieldErrors.contactEmail ? "border-danger/50" : ""}`}
+                    placeholder="you@example.com"
+                  />
+                  {fieldErrors.contactEmail && <p className="text-xs text-danger mt-1">{fieldErrors.contactEmail}</p>}
                 </Field>
                 <Field icon={Phone} label="Phone">
-                  <input name="phone" type="tel" onChange={handleChange} className="input w-full px-3 py-2" placeholder="+91 98765 43210" />
+                  <input
+                    name="phone"
+                    type="tel"
+                    onChange={handleChange}
+                    className={`input w-full px-3 py-2 ${fieldErrors.phone ? "border-danger/50" : ""}`}
+                    placeholder="+91 98765 43210"
+                  />
+                  {fieldErrors.phone && <p className="text-xs text-danger mt-1">{fieldErrors.phone}</p>}
                 </Field>
               </div>
               <Field icon={MapPin} label="Location">
@@ -350,7 +398,10 @@ export default function CreateCardPage() {
                 </p>
                 <span className="text-[10px] text-muted-2">Up to 3</span>
               </div>
-              <LinksBuilder value={links} onChange={setLinks} />
+              <LinksBuilder value={links} onChange={(v) => { setLinks(v); setFieldErrors((p) => { const n = {...p}; Object.keys(n).filter(k => k.startsWith("link_")).forEach(k => delete n[k]); return n; }); }} />
+              {links.map((_, i) => fieldErrors[`link_${i}`] && (
+                <p key={i} className="text-xs text-danger">Link {i + 1}: {fieldErrors[`link_${i}`]}</p>
+              ))}
             </div>
 
             {/* ── Actions ── */}

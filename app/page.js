@@ -54,11 +54,11 @@ const HOW_IT_WORKS = [
 
 // Fake vault entries for the hero visual
 const DEMO_ENTRIES = [
-  { label: "Gmail Personal", user: "farhan@gmail.com", cat: "Google", color: "#ea4335" },
-  { label: "GitHub", user: "farhankhan0986", cat: "Work", color: "#8b5cf6" },
-  { label: "Netflix", user: "farhan@gmail.com", cat: "Entertainment", color: "#ec4899" },
+  { label: "Gmail Personal", user: "johndoe@gmail.com", cat: "Google", color: "#ea4335" },
+  { label: "GitHub", user: "johndoe0986", cat: "Work", color: "#8b5cf6" },
+  { label: "Netflix", user: "johndoe@gmail.com", cat: "Entertainment", color: "#ec4899" },
   { label: "HDFC Bank", user: "acc_••••4821", cat: "Finance", color: "#10b981" },
-  { label: "Gmail Work", user: "farhan@company.com", cat: "Google", color: "#ea4335" },
+  { label: "Gmail Work", user: "johndoe@company.com", cat: "Google", color: "#ea4335" },
 ];
 
 export default function HomePage() {
@@ -364,8 +364,8 @@ export default function HomePage() {
                 {/* Mini vault UI */}
                 <div className="rounded-xl bg-background border border-border-subtle overflow-hidden">
                   {[
-                    { l: "Gmail - Personal", u: "farhan@gmail.com", c: "#ea4335" },
-                    { l: "Netflix", u: "farhan@gmail.com", c: "#e50914" },
+                    { l: "Gmail - Personal", u: "johndoe@gmail.com", c: "#ea4335" },
+                    { l: "Netflix", u: "johndoe@gmail.com", c: "#e50914" },
                     { l: "HDFC Bank", u: "acc ••••4821", c: "#10b981" },
                   ].map((e, i) => (
                     <div key={i} className={`flex items-center gap-3 px-4 py-3 ${i > 0 ? "border-t border-border-subtle" : ""}`}>
@@ -407,9 +407,9 @@ export default function HomePage() {
                 <div className="rounded-xl bg-background border border-border-subtle overflow-hidden">
                   <div className="h-10 bg-surface-2 border-b border-border-subtle" />
                   <div className="px-4 py-4 flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-surface-2 border border-border -mt-7 flex-shrink-0 flex items-center justify-center text-sm font-bold">FK</div>
+                    <div className="w-12 h-12 rounded-full bg-surface-2 border border-border -mt-7 flex-shrink-0 flex items-center justify-center text-sm font-bold">JD</div>
                     <div className="-mt-2">
-                      <p className="text-xs font-semibold">Farhan Abid</p>
+                      <p className="text-xs font-semibold">John Doe</p>
                       <p className="text-[11px] text-muted-2">Software Developer</p>
                     </div>
                     <div className="ml-auto">
@@ -530,15 +530,15 @@ export default function HomePage() {
                     <span className="text-[10px] font-medium">Verified</span>
                   </div>
                 </div>
-                <h3 className="text-base font-semibold">Farhan Khan</h3>
+                <h3 className="text-base font-semibold">John Doe</h3>
                 <p className="text-xs text-muted mt-0.5 mb-4">Software Developer</p>
                 <p className="text-xs text-muted leading-relaxed border-t border-border-subtle pt-4 mb-4">
                   Building clean, secure digital products. Open to new opportunities.
                 </p>
                 <div className="space-y-2">
                   {[
-                    { icon: <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 8l9 6 9-6M4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z"/></svg>, label: 'Email', val: 'farhan@gmail.com' },
-                    { icon: <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 21s6-5.33 6-10a6 6 0 10-12 0c0 4.67 6 10 6 10z"/><circle cx="12" cy="11" r="2.5"/></svg>, label: 'Location', val: 'Hyderabad, India' },
+                    { icon: <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 8l9 6 9-6M4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z"/></svg>, label: 'Email', val: 'johndoe@gmail.com' },
+                    { icon: <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 21s6-5.33 6-10a6 6 0 10-12 0c0 4.67 6 10 6 10z"/><circle cx="12" cy="11" r="2.5"/></svg>, label: 'Location', val: 'New York, USA' },
                   ].map(({ icon, label, val }) => (
                     <div key={label} className="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-border-subtle" style={{ backgroundColor: 'var(--surface-2)' }}>
                       <div className="w-7 h-7 rounded-lg border border-border-subtle flex items-center justify-center text-muted flex-shrink-0" style={{ backgroundColor: 'var(--surface)' }}>{icon}</div>
@@ -581,7 +581,7 @@ export default function HomePage() {
                 </div>
                 <div className="rounded-xl border border-border-subtle px-3 py-2.5 flex items-center gap-2" style={{ backgroundColor: 'var(--background)' }}>
                   <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-muted-2 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
-                  <span className="text-xs font-mono text-muted truncate">idvault.app/card/farhankhan</span>
+                  <span className="text-xs font-mono text-muted truncate">idvault.app/card/johndoe</span>
                   <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-muted-2 ml-auto flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
                 </div>
                 <p className="text-xs text-muted leading-relaxed">
@@ -897,7 +897,7 @@ export default function HomePage() {
             <h3 className="text-base font-semibold mb-1">Support IDVault</h3>
             <p className="text-xs text-muted mb-4">Scan the QR or use the UPI ID</p>
             <img src="/upi-qr.png" alt="UPI QR" className="mx-auto my-4 w-36 h-36 rounded-lg" />
-            <p className="text-sm font-mono text-muted">farhankhan080304@oksbi</p>
+            {/* <p className="text-sm font-mono text-muted">farhankhan080304@oksbi</p> */}
             <button onClick={() => setShowSupport(false)} className="mt-5 btn-ghost w-full py-2 text-sm">
               Close
             </button>

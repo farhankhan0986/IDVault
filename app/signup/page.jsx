@@ -48,6 +48,37 @@ function PasswordStrength({ password }) {
   );
 }
 
+function validateSignup(form) {
+  const errs = {};
+  if (!form.floating_name.trim()) {
+    errs.name = "Full name is required";
+  } else if (form.floating_name.trim().length < 2) {
+    errs.name = "Name must be at least 2 characters";
+  } else if (form.floating_name.trim().length > 50) {
+    errs.name = "Name must be under 50 characters";
+  }
+  if (!form.floating_email.trim()) {
+    errs.email = "Email is required";
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.floating_email.trim())) {
+    errs.email = "Enter a valid email address";
+  }
+  if (!form.floating_password) {
+    errs.password = "Password is required";
+  } else if (form.floating_password.length < 8) {
+    errs.password = "Password must be at least 8 characters";
+  } else if (!/[A-Z]/.test(form.floating_password)) {
+    errs.password = "Include at least one uppercase letter";
+  } else if (!/[0-9]/.test(form.floating_password)) {
+    errs.password = "Include at least one number";
+  }
+  if (!form.repeat_password) {
+    errs.confirm = "Please confirm your password";
+  } else if (form.floating_password !== form.repeat_password) {
+    errs.confirm = "Passwords do not match";
+  }
+  return errs;
+}
+
 export default function SignupPage() {
   const router = useRouter();
   const [form, setForm] = useState({
@@ -56,22 +87,27 @@ export default function SignupPage() {
     floating_password: "",
     repeat_password: "",
   });
-  const [error, setError]     = useState("");
+  const [errors, setErrors]   = useState({});
+  const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPass, setShowPass]       = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const fieldKey = { floating_name: "name", floating_email: "email", floating_password: "password", repeat_password: "confirm" };
 
-  const passwordsMatch = !form.repeat_password || form.floating_password === form.repeat_password;
+  const handleChange = (e) => {
+    const updated = { ...form, [e.target.name]: e.target.value };
+    setForm(updated);
+    const key = fieldKey[e.target.name];
+    if (key && errors[key]) setErrors((prev) => ({ ...prev, [key]: "" }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    if (form.floating_password !== form.repeat_password) {
-      setError("Passwords do not match");
-      return;
-    }
+    setServerError("");
+    const errs = validateSignup(form);
+    if (Object.keys(errs).length) { setErrors(errs); return; }
+    setErrors({});
     try {
       setLoading(true);
       const res  = await fetch("/api/auth/signup", {
@@ -84,10 +120,10 @@ export default function SignupPage() {
         }),
       });
       const data = await res.json();
-      if (!res.ok) { setError(data.message || "Something went wrong"); return; }
+      if (!res.ok) { setServerError(data.message || "Something went wrong"); return; }
       router.push("/login");
     } catch {
-      setError("Server error. Please try again.");
+      setServerError("Server error. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -194,17 +230,17 @@ export default function SignupPage() {
             <p className="text-sm text-muted mt-1.5">Free, private, and encrypted</p>
           </div>
 
-          {/* Error */}
-          {error && (
+          {/* Server error */}
+          {serverError && (
             <div className="mb-4 flex items-start gap-2.5 rounded-lg bg-danger/5 border border-danger/20 px-3.5 py-2.5">
               <svg viewBox="0 0 24 24" className="w-4 h-4 text-danger flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
               </svg>
-              <p className="text-xs text-danger">{error}</p>
+              <p className="text-xs text-danger">{serverError}</p>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
 
             {/* Name */}
             <div>
@@ -214,12 +250,12 @@ export default function SignupPage() {
                 name="floating_name"
                 value={form.floating_name}
                 onChange={handleChange}
-                required
                 autoFocus
                 autoComplete="name"
-                placeholder="Farhan Khan"
-                className="input w-full px-3.5 py-2.5"
+                placeholder="John Doe"
+                className={`input w-full px-3.5 py-2.5 ${errors.name ? "border-danger/50 focus:border-danger/70" : ""}`}
               />
+              {errors.name && <p className="text-xs text-danger mt-1.5">{errors.name}</p>}
             </div>
 
             {/* Email */}
@@ -230,11 +266,11 @@ export default function SignupPage() {
                 name="floating_email"
                 value={form.floating_email}
                 onChange={handleChange}
-                required
                 autoComplete="email"
                 placeholder="you@example.com"
-                className="input w-full px-3.5 py-2.5"
+                className={`input w-full px-3.5 py-2.5 ${errors.email ? "border-danger/50 focus:border-danger/70" : ""}`}
               />
+              {errors.email && <p className="text-xs text-danger mt-1.5">{errors.email}</p>}
             </div>
 
             {/* Password */}
@@ -246,10 +282,9 @@ export default function SignupPage() {
                   name="floating_password"
                   value={form.floating_password}
                   onChange={handleChange}
-                  required
                   autoComplete="new-password"
                   placeholder="Min. 8 characters"
-                  className="input w-full px-3.5 py-2.5 pr-11"
+                  className={`input w-full px-3.5 py-2.5 pr-11 ${errors.password ? "border-danger/50 focus:border-danger/70" : ""}`}
                 />
                 <button
                   type="button"
@@ -260,7 +295,10 @@ export default function SignupPage() {
                   <EyeIcon open={showPass} />
                 </button>
               </div>
-              <PasswordStrength password={form.floating_password} />
+              {errors.password
+                ? <p className="text-xs text-danger mt-1.5">{errors.password}</p>
+                : <PasswordStrength password={form.floating_password} />
+              }
             </div>
 
             {/* Confirm Password */}
@@ -272,12 +310,9 @@ export default function SignupPage() {
                   name="repeat_password"
                   value={form.repeat_password}
                   onChange={handleChange}
-                  required
                   autoComplete="new-password"
                   placeholder="••••••••••••"
-                  className={`input w-full px-3.5 py-2.5 pr-11 transition-colors ${
-                    !passwordsMatch ? "border-danger/50 focus:border-danger/70" : ""
-                  }`}
+                  className={`input w-full px-3.5 py-2.5 pr-11 ${errors.confirm ? "border-danger/50 focus:border-danger/70" : ""}`}
                 />
                 <button
                   type="button"
@@ -288,9 +323,7 @@ export default function SignupPage() {
                   <EyeIcon open={showConfirm} />
                 </button>
               </div>
-              {!passwordsMatch && (
-                <p className="text-xs text-danger mt-1.5">Passwords don&apos;t match</p>
-              )}
+              {errors.confirm && <p className="text-xs text-danger mt-1.5">{errors.confirm}</p>}
             </div>
 
             {/* Terms */}
@@ -311,7 +344,7 @@ export default function SignupPage() {
             {/* Submit */}
             <button
               type="submit"
-              disabled={loading || !passwordsMatch}
+              disabled={loading}
               className="btn-primary w-full py-2.5 text-sm font-medium disabled:opacity-50 mt-1"
             >
               {loading ? (

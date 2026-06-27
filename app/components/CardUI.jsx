@@ -374,7 +374,7 @@ export default function CardUI({ card, showActions = false }) {
                     className="w-8 h-8 rounded-lg flex items-center justify-center"
                     style={{ backgroundColor: color + "18", border: `1px solid ${color}30` }}
                   >
-                    <span style={{ color }}>{lucide ? <Icon size={14} /> : <Icon />}</span>
+                    <span style={{ color }}>{(lucide || preset.size) ? <Icon size={14} /> : <Icon />}</span>
                   </div>
                   <p className="text-[11px] font-medium text-foreground text-center leading-tight">{label}</p>
                 </a>
