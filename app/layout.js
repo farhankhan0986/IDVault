@@ -2,6 +2,7 @@ import "./globals.css";
 import Navbar from "./components/Navbar";
 import { Toaster } from "sonner";
 import { Inter } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -33,6 +34,7 @@ export default function RootLayout({ children }) {
 
         {/* Main Content */}
         <main className="max-w-6xl mx-auto px-4 py-2">{children}</main>
+        <Analytics />
         <Toaster
           richColors={false}
           theme="dark"
