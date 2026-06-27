@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="110" ry="110" fill="#000000"/>
+  <g transform="translate(256, 265)">
+    <!-- Lock body -->
+    <rect x="-105" y="-75" width="210" height="175" rx="22" ry="22" fill="white"/>
+    <!-- Shackle -->
+    <path d="M -68 -75 L -68 -130 Q -68 -195 0 -195 Q 68 -195 68 -130 L 68 -75"
+          fill="none" stroke="white" stroke-width="52" stroke-linecap="round"/>
+    <!-- Keyhole -->
+    <circle cx="0" cy="48" r="28" fill="#000000"/>
+    <rect x="-14" y="48" width="28" height="42" rx="5" fill="#000000"/>
+  </g>
+</svg>

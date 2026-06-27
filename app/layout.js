@@ -13,6 +13,11 @@ export const metadata = {
   title: "IDVault - Digital Identity & Password Manager",
   description:
     "Securely store your digital ID card and manage all your passwords in one private, encrypted vault.",
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export default function RootLayout({ children }) {
