@@ -19,6 +19,30 @@ export const metadata = {
     icon: "/icon.svg",
     apple: "/icon.svg",
   },
+  metadataBase: new URL("https://id-vault.vercel.app"),
+  openGraph: {
+    title: "IDVault - Digital Identity & Password Manager",
+    description:
+      "Create a shareable digital ID card and manage all your passwords in one private, encrypted vault. Free, no subscriptions.",
+    url: "https://id-vault.vercel.app",
+    siteName: "IDVault",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "IDVault - Digital Identity & Password Manager",
+    description:
+      "Create a shareable digital ID card and manage all your passwords in one private, encrypted vault.",
+  },
+  keywords: [
+    "digital ID card",
+    "password manager",
+    "encrypted vault",
+    "visiting card online",
+    "free password manager",
+    "digital identity",
+    "IDVault",
+  ],
 };
 
 export default function RootLayout({ children }) {
@@ -29,6 +53,30 @@ export default function RootLayout({ children }) {
         suppressHydrationWarning={true}
         style={{ fontFamily: "var(--font-inter), system-ui, sans-serif" }}
       >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebApplication",
+              name: "IDVault",
+              url: "https://id-vault.vercel.app",
+              description:
+                "Securely store your digital ID card and manage all your passwords in one private, encrypted vault.",
+              applicationCategory: "SecurityApplication",
+              operatingSystem: "Web, Android, iOS",
+              offers: {
+                "@type": "Offer",
+                price: "0",
+                priceCurrency: "INR",
+              },
+              author: {
+                "@type": "Person",
+                name: "Farhan Abid",
+              },
+            }),
+          }}
+        />
         {/* Navbar */}
         <Navbar />
 

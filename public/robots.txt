@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Allow: /card/
+Allow: /public-vault
+Allow: /demo
+
+Disallow: /vault
+Disallow: /dashboard
+Disallow: /create-card
+Disallow: /edit-card
+Disallow: /api/
+
+Sitemap: https://id-vault.vercel.app/sitemap.xml
