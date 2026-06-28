@@ -116,13 +116,18 @@ export default function PasswordCard({ entry, onEdit, onDelete }) {
 
       {/* Password row */}
       <div className="flex items-center gap-2 bg-background rounded-md px-3 py-2 border border-border-subtle">
-        <span className="flex-1 font-mono text-sm text-foreground tracking-widest truncate">
+        <span
+          className={`flex-1 font-mono text-sm text-foreground ${
+            showPass ? "break-all" : "tracking-widest truncate"
+          }`}
+        >
           {showPass ? entry.password : maskedPass}
         </span>
 
         <button
+          type="button"
           onClick={() => setShowPass((v) => !v)}
-          className="btn-icon w-7 h-7 text-xs flex-shrink-0"
+          className="btn-icon w-8 h-8 text-xs flex-shrink-0 touch-manipulation"
           title={showPass ? "Hide" : "Show"}
         >
           {showPass ? (
@@ -137,8 +142,9 @@ export default function PasswordCard({ entry, onEdit, onDelete }) {
         </button>
 
         <button
+          type="button"
           onClick={copyPassword}
-          className="btn-icon w-7 h-7 flex-shrink-0"
+          className="btn-icon w-8 h-8 flex-shrink-0 touch-manipulation"
           title="Copy password"
         >
           {copied ? (

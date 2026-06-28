@@ -295,35 +295,7 @@ export default function VaultPage() {
             </div>
 
             {/* Google accounts spotlight */}
-            {selectedCategory === "All" &&
-              entries.filter((e) => e.category === "Google").length > 0 && (
-                <div className="mb-6 p-4 rounded-xl border border-border-subtle bg-surface">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div
-                      className="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-bold"
-                      style={{ backgroundColor: "#ea4335" }}
-                    >
-                      G
-                    </div>
-                    <span className="text-xs font-medium text-muted">
-                      Google accounts (
-                      {entries.filter((e) => e.category === "Google").length})
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {entries
-                      .filter((e) => e.category === "Google")
-                      .map((entry) => (
-                        <PasswordCard
-                          key={entry._id}
-                          entry={entry}
-                          onEdit={handleEdit}
-                          onDelete={handleDelete}
-                        />
-                      ))}
-                  </div>
-                </div>
-              )}
+            
 
             {/* Password grid */}
             {filtered.length === 0 ? (
