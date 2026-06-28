@@ -358,9 +358,21 @@ export default function CardUI({ card, showActions = false }) {
           <p className="text-xs font-medium text-muted-2 uppercase tracking-wider mb-3">Links</p>
           <div className="flex gap-2">
             {allLinks.map(({ label, url }, i) => {
+              const lowerLabel = label?.toLowerCase() ?? "";
+              const lowerUrl   = url?.toLowerCase() ?? "";
               const preset =
-                LINK_PRESETS.find((p) => p.label.toLowerCase() === label?.toLowerCase()) ||
-                LINK_PRESETS.find((p) => p.id === "custom");
+                LINK_PRESETS.find((p) => p.label.toLowerCase() === lowerLabel) ||
+                /* match Twitter/X by URL even when label differs */
+                ((lowerUrl.includes("twitter.com") || lowerUrl.includes("x.com"))
+                  ? LINK_PRESETS.find((p) => p.id === "twitter") : null) ||
+                /* match LinkedIn by URL */
+                (lowerUrl.includes("linkedin.com") ? LINK_PRESETS.find((p) => p.id === "linkedin") : null) ||
+                /* match GitHub by URL */
+                (lowerUrl.includes("github.com") ? LINK_PRESETS.find((p) => p.id === "github") : null) ||
+                /* match Instagram by URL */
+                (lowerUrl.includes("instagram.com") ? LINK_PRESETS.find((p) => p.id === "instagram") : null) ||
+                /* company / website — Globe instead of chain-link */
+                LINK_PRESETS.find((p) => p.id === "website");
               const { Icon, color, lucide } = preset;
               return (
                 <a
