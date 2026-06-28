@@ -2,28 +2,17 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { getPasswordIcon } from "@/lib/passwordIcons";
 
-// Category icons (text-based, no emoji overload)
-const CATEGORY_META = {
-  Google: { label: "Google", color: "#ea4335", letter: "G" },
-  Social: { label: "Social", color: "#1d9bf0", letter: "S" },
-  Work: { label: "Work", color: "#8b5cf6", letter: "W" },
-  Finance: { label: "Finance", color: "#10b981", letter: "F" },
-  Shopping: { label: "Shopping", color: "#f59e0b", letter: "Sh" },
-  Email: { label: "Email", color: "#6366f1", letter: "E" },
-  Entertainment: { label: "Entertainment", color: "#ec4899", letter: "En" },
-  Other: { label: "Other", color: "#71717a", letter: "O" },
-};
+function Avatar({ label, category }) {
+  const { Icon, color } = getPasswordIcon(label, category);
 
-function Avatar({ category, label }) {
-  const meta = CATEGORY_META[category] || CATEGORY_META.Other;
-  // If Google, show the brand "G" with brand red
   return (
     <div
-      className="w-9 h-9 rounded-lg flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
-      style={{ backgroundColor: meta.color + "22", border: `1px solid ${meta.color}33` }}
+      className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+      style={{ backgroundColor: color + "22", border: `1px solid ${color}40` }}
     >
-      <span style={{ color: meta.color }}>{meta.letter}</span>
+      <Icon size={17} style={{ color }} />
     </div>
   );
 }
@@ -46,8 +35,6 @@ export default function PasswordCard({ entry, onEdit, onDelete }) {
         textArea.select();
         try {
           document.execCommand("copy");
-        } catch (err) {
-          throw err;
         } finally {
           textArea.remove();
         }
@@ -84,15 +71,13 @@ export default function PasswordCard({ entry, onEdit, onDelete }) {
     <div className="card-flat p-4 flex flex-col gap-3 hover:border-border transition-colors duration-200">
       {/* Top row */}
       <div className="flex items-start gap-3">
-        <Avatar category={entry.category} label={entry.label} />
+        <Avatar label={entry.label} category={entry.category} />
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <p className="text-sm font-medium truncate">{entry.label}</p>
             {entry.isFavorite && (
-              <span className="text-xs text-muted-2" title="Favourite">
-                ★
-              </span>
+              <span className="text-xs text-muted-2" title="Favourite">★</span>
             )}
             <span className="badge ml-auto">{entry.category}</span>
           </div>
@@ -166,10 +151,7 @@ export default function PasswordCard({ entry, onEdit, onDelete }) {
 
       {/* Actions */}
       <div className="flex items-center gap-2 pt-1 border-t border-border-subtle">
-        <button
-          onClick={() => onEdit(entry)}
-          className="btn-ghost px-3 py-1 text-xs flex-1"
-        >
+        <button onClick={() => onEdit(entry)} className="btn-ghost px-3 py-1 text-xs flex-1">
           Edit
         </button>
         <button

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { getPasswordIcon } from "@/lib/passwordIcons";
 
 // ─── Service Presets ───────────────────────────────────────────────────────────
 // Each preset auto-fills label, category, and website user only types username+password
@@ -223,17 +224,18 @@ export default function AddPasswordModal({ onClose, onSaved, initial = null }) {
                     onClick={() => applyPreset(preset)}
                     className="flex items-center gap-3 rounded-xl border border-border-subtle bg-background px-3 py-3 hover:border-border hover:bg-surface-2 transition-all duration-150 text-left group"
                   >
-                    {/* Icon circle */}
-                    <div
-                      className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0"
-                      style={{
-                        backgroundColor: preset.color + "22",
-                        color: preset.dark ? "#fff" : preset.color,
-                        border: `1px solid ${preset.color}33`,
-                      }}
-                    >
-                      {preset.abbr}
-                    </div>
+                    {/* Brand icon */}
+                    {(() => {
+                      const { Icon, color } = getPasswordIcon(preset.label, preset.category);
+                      return (
+                        <div
+                          className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                          style={{ backgroundColor: color + "22", border: `1px solid ${color}40` }}
+                        >
+                          <Icon size={15} style={{ color }} />
+                        </div>
+                      );
+                    })()}
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-medium truncate">{preset.label}</p>
                       <p className="text-xs text-muted-2 truncate">
@@ -277,15 +279,17 @@ export default function AddPasswordModal({ onClose, onSaved, initial = null }) {
               {/* Selected service preview (if a preset was picked) */}
               {form.label && !isEdit && (
                 <div className="flex items-center gap-3 rounded-xl bg-background border border-border-subtle px-3 py-2.5">
-                  <div
-                    className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0"
-                    style={{
-                      backgroundColor: (PRESETS.find(p => p.label === form.label)?.color || "#71717a") + "22",
-                      color: PRESETS.find(p => p.label === form.label)?.color || "#71717a",
-                    }}
-                  >
-                    {form.label[0]}
-                  </div>
+                  {(() => {
+                    const { Icon, color } = getPasswordIcon(form.label, form.category);
+                    return (
+                      <div
+                        className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                        style={{ backgroundColor: color + "22", border: `1px solid ${color}40` }}
+                      >
+                        <Icon size={13} style={{ color }} />
+                      </div>
+                    );
+                  })()}
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium">{form.label}</p>
                     <p className="text-xs text-muted-2">{form.category} · {form.website.replace(/^https?:\/\//, "") || "no website"}</p>
