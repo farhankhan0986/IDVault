@@ -1,11 +1,13 @@
 import PublicCardClient from "./PublicCardClient";
 
+const SITE = "https://id-vault.vercel.app";
+
 export async function generateMetadata({ params }) {
   const { id } = await params;
 
   try {
     const res = await fetch(
-      `https://id-vault.vercel.app/api/cards/public/${id}`,
+      `${SITE}/api/cards/public/${id}`,
       { next: { revalidate: 3600 } }
     );
 
@@ -13,10 +15,11 @@ export async function generateMetadata({ params }) {
 
     const data = await res.json();
     const card = data.card;
-    const name = card?.name || "IDVault Card";
+    const name = card?.fullName || "IDVault Card";
     const title = card?.title || "";
     const bio = card?.bio || "View this digital ID card on IDVault.";
     const description = title ? `${title} — ${bio}` : bio;
+    const image = card?.profileImage || `${SITE}/default-avatar.png`;
 
     return {
       title: `${name} | IDVault`,
@@ -24,13 +27,22 @@ export async function generateMetadata({ params }) {
       openGraph: {
         title: `${name} | IDVault`,
         description,
-        url: `https://id-vault.vercel.app/card/${id}`,
+        url: `${SITE}/card/${id}`,
         type: "profile",
+        images: [
+          {
+            url: image,
+            width: 400,
+            height: 400,
+            alt: name,
+          },
+        ],
       },
       twitter: {
         card: "summary",
         title: `${name} | IDVault`,
         description,
+        images: [image],
       },
     };
   } catch {
